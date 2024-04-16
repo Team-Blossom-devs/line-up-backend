@@ -4,10 +4,13 @@ import java.time.LocalDateTime;
 
 import com.blossom.lineup.Member.entity.Customer;
 import com.blossom.lineup.Organization.entity.Organization;
+import com.blossom.lineup.Waiting.util.EntranceStatus;
 import com.blossom.lineup.base.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,6 +36,8 @@ public class Waiting extends BaseEntity {
 	private LocalDateTime entranceTime;
 	private Integer tableNumber;
 	private Integer waitingNumber;
+	@Enumerated(value = EnumType.STRING)
+	private EntranceStatus entranceStatus;
 
 	@ManyToOne
 	@JoinColumn(name = "organization_id")
@@ -44,13 +49,14 @@ public class Waiting extends BaseEntity {
 
 	@Builder
 	public Waiting(Integer headCount, LocalDateTime entranceTime, Integer tableNumber, Integer waitingNumber,
-		Organization organization, Customer customer){
+		Organization organization, Customer customer, EntranceStatus entranceStatus){
 		this.headCount = headCount;
 		this.entranceTime = entranceTime;
 		this.tableNumber = tableNumber;
 		this.waitingNumber = waitingNumber;
 		this.organization = organization;
 		this.customer = customer;
+		this.entranceStatus = entranceStatus;
 	}
 
 }
