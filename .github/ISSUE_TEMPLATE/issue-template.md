@@ -3,7 +3,7 @@ name: Issue Template
 about: 이슈 템플릿
 title: ''
 labels: ''
-assignees: je326
+assignees: ''
 
 ---
 
