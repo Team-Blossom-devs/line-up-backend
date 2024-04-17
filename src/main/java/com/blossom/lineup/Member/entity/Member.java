@@ -24,7 +24,7 @@ public abstract class Member extends BaseEntity implements BaseMember{
 	private Role role;
 	private String email;
 
-	Member(String userName, String phoneNumber, Long socialId, Role role, String email) {
+	protected Member(String userName, String phoneNumber, Long socialId, Role role, String email) {
 		this.userName = userName;
 		this.phoneNumber = phoneNumber;
 		this.socialId = socialId;
