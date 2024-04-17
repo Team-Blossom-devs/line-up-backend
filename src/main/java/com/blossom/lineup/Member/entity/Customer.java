@@ -1,5 +1,8 @@
 package com.blossom.lineup.Member.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.blossom.lineup.Member.util.Role;
 import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Waiting.entity.Waiting;
@@ -17,6 +20,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@SQLRestriction(value = "active_status <> 'DELETED'")
+@SQLDelete(sql = "UPDATE customer SET active_status = 'DELETED' WHERE customer_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Customer extends Member{
 
