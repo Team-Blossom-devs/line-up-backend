@@ -3,6 +3,9 @@ package com.blossom.lineup.Organization.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.blossom.lineup.Member.entity.Manager;
 import com.blossom.lineup.Waiting.entity.Waiting;
 import com.blossom.lineup.base.BaseEntity;
@@ -22,6 +25,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@SQLRestriction(value = "active_status <> 'DELETED'")
+@SQLDelete(sql = "UPDATE organization SET active_status = 'DELETED' WHERE organization_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Organization extends BaseEntity {
 

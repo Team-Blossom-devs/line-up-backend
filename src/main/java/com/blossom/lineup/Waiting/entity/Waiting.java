@@ -2,6 +2,9 @@ package com.blossom.lineup.Waiting.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.blossom.lineup.Member.entity.Customer;
 import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Waiting.util.EntranceStatus;
@@ -24,6 +27,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@SQLRestriction(value = "active_status <> 'DELETED'")
+@SQLDelete(sql = "UPDATE waiting SET active_status = 'DELETED' WHERE waiting_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Waiting extends BaseEntity {
 
