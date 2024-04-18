@@ -7,4 +7,6 @@ spring:
         - local
       prod:
         - prod
+    include:
+      - kafka
 
