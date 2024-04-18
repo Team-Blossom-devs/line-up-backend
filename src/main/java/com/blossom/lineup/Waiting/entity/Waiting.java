@@ -2,6 +2,7 @@ package com.blossom.lineup.Waiting.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -10,16 +11,6 @@ import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Waiting.util.EntranceStatus;
 import com.blossom.lineup.base.BaseEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +21,10 @@ import lombok.NoArgsConstructor;
 @SQLRestriction(value = "active_status <> 'DELETED'")
 @SQLDelete(sql = "UPDATE waiting SET active_status = 'DELETED' WHERE waiting_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = {
+		// (주점, 대기번호, 대기날짜)가 unique
+		@UniqueConstraint(columnNames = {"organization_id", "waiting_number", "date(createdAt)"})
+})
 public class Waiting extends BaseEntity {
 
 	@Id
@@ -37,20 +32,20 @@ public class Waiting extends BaseEntity {
 	@Column(name = "waiting_id")
 	private Long id;
 
-	private Integer headCount;
-	private LocalDateTime entranceTime;
-	private Integer tableNumber;
-	private Integer waitingNumber;
+	private Integer headCount; 				// 인원수
+	private LocalDateTime entranceTime;     // 입장 시간
+	private Integer tableNumber;            // 배정받은 테이블 번호
+	private Integer waitingNumber;			// 대기 번호
 	@Enumerated(value = EnumType.STRING)
-	private EntranceStatus entranceStatus;
+	private EntranceStatus entranceStatus;	// 입장 상태
 
 	@ManyToOne
 	@JoinColumn(name = "organization_id")
-	private Organization organization;
+	private Organization organization;		// 주점
 
 	@OneToOne
 	@JoinColumn(name = "customer_id")
-	private Customer customer;
+	private Customer customer;				// 대기자
 
 	@Builder
 	public Waiting(Integer headCount, LocalDateTime entranceTime, Integer tableNumber, Integer waitingNumber,
@@ -63,5 +58,4 @@ public class Waiting extends BaseEntity {
 		this.customer = customer;
 		this.entranceStatus = entranceStatus;
 	}
-
 }
