@@ -12,6 +12,7 @@ public enum Code {
 
 	// WAT : Waiting entity error
 	WAITING_NOT_FOUND(HttpStatus.BAD_REQUEST, "WAT-001", "대기 기록을 찾을 수 없습니다."),
+	WAITING_NUMBER_NULLPOINTER(HttpStatus.BAD_REQUEST, "WAT-101", "대기 번호가 null 입니다."),
 
 	// KFK : Kafka error
 	CONSUME_DATA_NOT_FOUND(HttpStatus.BAD_REQUEST, "KFK-001", "클러스터에서 오류가 발생했습니다. 로그를 확인해주세요.");
