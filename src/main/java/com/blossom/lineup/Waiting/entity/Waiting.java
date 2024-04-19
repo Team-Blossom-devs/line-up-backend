@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -21,19 +20,13 @@ import java.time.LocalDateTime;
 @SQLRestriction(value = "active_status <> 'DELETED'")
 @SQLDelete(sql = "UPDATE waiting SET active_status = 'DELETED' WHERE waiting_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = {
-		// (주점, 대기번호, 대기날짜)가 unique
-		@UniqueConstraint(columnNames = {"organization_id", "waiting_number", "createdDate"})
-})
+@Table
 public class Waiting extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "waiting_id")
 	private Long id;
-
-	@NotNull
-	private Integer waitingNumber;			// 대기 번호
 
 	@NotNull
 	@Enumerated(value = EnumType.STRING)
@@ -53,18 +46,14 @@ public class Waiting extends BaseEntity {
 	private LocalDateTime entranceTime;     // 입장 시간
 	private Integer tableNumber;            // 배정받은 테이블 번호
 
-	private LocalDate createdDate;
-
 	@Builder
-	public Waiting(Integer headCount, LocalDateTime entranceTime, Integer tableNumber, Integer waitingNumber,
-		Organization organization, Customer customer, EntranceStatus entranceStatus){
+	public Waiting(Integer headCount, LocalDateTime entranceTime, Integer tableNumber,Organization organization,
+				   Customer customer, EntranceStatus entranceStatus){
 		this.headCount = headCount;
 		this.entranceTime = entranceTime;
 		this.tableNumber = tableNumber;
-		this.waitingNumber = waitingNumber;
 		this.organization = organization;
 		this.customer = customer;
 		this.entranceStatus = entranceStatus;
-		this.createdDate = getCreatedAt().toLocalDate();
 	}
 }
