@@ -40,12 +40,13 @@ public class Organization extends BaseEntity {
 	private Set<Waiting> waitings;
 
 	@Builder
-	public Organization(String name, Integer seatCount, String introduce, Manager manager) {
+	public Organization(String name, Integer seatCount, Integer tableTimeLimit, String introduce, Manager manager) {
 		this.name = name;
 		this.seatCount = seatCount;
 		this.introduce = introduce;
 		this.manager = manager;
 		this.waitings = new HashSet<>();
+		this.tableTimeLimit = tableTimeLimit;
 	}
 
 }
