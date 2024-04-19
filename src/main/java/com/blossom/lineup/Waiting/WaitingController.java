@@ -17,11 +17,7 @@ public class WaitingController {
 
     private final WaitingService waitingService;
 
-    @GetMapping("/test")
-    public String test(){
-        return "test";
-    }
-
+    // todo : waitingId없이 (대기 걸어두지 않았을 때)의 대기 현황 조회 추가하기.
     @GetMapping("/waiting-status/{waitingId}")
     public Response<CheckWaitingStatus> getCurrentWaitingStatus(@PathVariable("waitingId") Long waitingId){
         log.debug("waitingId : "+waitingId);
