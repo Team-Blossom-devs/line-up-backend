@@ -35,18 +35,18 @@ public class WaitingServiceImpl implements WaitingService{
         Waiting me = findWaiting(waitingId);
         Organization o = me.getOrganization();
 
-        // 나를 포함한 대기 명단
-        List<Waiting> beforeMe = waitingRepository.findByOrganizationAndEntranceStatusWaitingAndIdLessThanOrderById(o, waitingId);
+        // 나 이전의 대기 명단
+        List<Waiting> beforeMe = waitingRepository.findBeforeMyWaiting(o, waitingId);
         int beforeMeCnt = beforeMe.size();
 
         // 이용 중인 테이블 명단
-        List<Waiting> usingTables = waitingRepository.findByOrganizationAndEntranceStatusCompleteOrderByEntranceTime(o);
+        List<Waiting> usingTables = waitingRepository.findUsingTables(o);
 
         // 정렬된 각각의 테이블의 남은 이용 시간(분)
-        List<Integer> remainTableTimes = usingTables.stream()
+        List<Integer> remainTableTimes = new java.util.ArrayList<>(usingTables.stream()
                 .map(waiting -> {
                     // 대기시간이 null인 테이블이 존재하면, exception.
-                    if(waiting.getEntranceTime() == null){
+                    if (waiting.getEntranceTime() == null) {
                         throw new BusinessException(Code.ENTRANCE_TIME_IS_NULL);
                     }
                     //
@@ -57,7 +57,7 @@ public class WaitingServiceImpl implements WaitingService{
 
                         return (int) duration.toMinutes(); // 분단위로 변환
                     }
-                }).toList();
+                }).toList());
 
         // 주점에서 다루는 테이블보다 테이블 이용 개수가 적으면, List에 0분 남은 개수만큼 추가.
         while(remainTableTimes.size() < o.getSeatCount()){
