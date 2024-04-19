@@ -1,5 +1,6 @@
 package com.blossom.lineup.Waiting;
 
+import com.blossom.lineup.Waiting.entity.response.CheckWaitingStatus;
 import com.blossom.lineup.base.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class WaitingController {
     }
 
     @GetMapping("/waiting-status/{waitingId}")
-    public Response<?> getCurrentWaitingStatus(@PathVariable("waitingId") Long waitingId){
+    public Response<CheckWaitingStatus> getCurrentWaitingStatus(@PathVariable("waitingId") Long waitingId){
         log.debug("waitingId : "+waitingId);
 
         return Response.ok(waitingService.myCurrentWaiting(waitingId));
