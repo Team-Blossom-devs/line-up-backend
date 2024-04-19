@@ -22,10 +22,9 @@ public class WaitingController {
     }
 
     @GetMapping("/waiting-status/{waitingId}")
-    public Response<?> getCurrentWaitingStatus(@PathVariable("waitingId") String waitingId){
+    public Response<?> getCurrentWaitingStatus(@PathVariable("waitingId") Long waitingId){
         log.debug("waitingId : "+waitingId);
 
-        Long wId = Long.parseLong(waitingId);
-        return Response.ok(waitingService.myCurrentWaiting(wId));
+        return Response.ok(waitingService.myCurrentWaiting(waitingId));
     }
 }
