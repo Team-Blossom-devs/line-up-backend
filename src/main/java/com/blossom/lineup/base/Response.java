@@ -19,26 +19,30 @@ public class Response<T> {
 	private String message;
 	private T data;
 
-	public Response(String code) {
+	private Response(String code) {
 		this.code = code;
 	}
 
-	public Response(String code, T data) {
+	private Response(String code, T data) {
 		this.code = code;
 		this.data = data;
 	}
 
-	public Response(String code, String message) {
+	private Response(String code, String message) {
 		this.code = code;
 		this.message = message;
 	}
 
 	public static Response<Void> ok(){
-		return new Response<>(Code.OK.getCode());
+		return new Response<>(Code.OK.getCode(), Code.OK.getMessage());
 	}
 
 	public static <T> Response<T> ok(T data) {
-		return new Response<>(Code.OK.getCode(), data);
+		return new Response<>(Code.OK.getCode(), Code.OK.getMessage(), data);
+	}
+
+	public static <T> Response<T> ok(String message, T data){
+		return new Response<>(Code.OK.getCode(), message, data);
 	}
 
 	public static <E> Response<Void> fail(String code) {

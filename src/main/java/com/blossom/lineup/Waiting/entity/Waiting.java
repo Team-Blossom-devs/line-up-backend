@@ -1,35 +1,26 @@
 package com.blossom.lineup.Waiting.entity;
 
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-
 import com.blossom.lineup.Member.entity.Customer;
 import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Waiting.util.EntranceStatus;
 import com.blossom.lineup.base.BaseEntity;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @SQLRestriction(value = "active_status <> 'DELETED'")
 @SQLDelete(sql = "UPDATE waiting SET active_status = 'DELETED' WHERE waiting_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table
 public class Waiting extends BaseEntity {
 
 	@Id
@@ -37,31 +28,32 @@ public class Waiting extends BaseEntity {
 	@Column(name = "waiting_id")
 	private Long id;
 
-	private Integer headCount;
-	private LocalDateTime entranceTime;
-	private Integer tableNumber;
-	private Integer waitingNumber;
+	@NotNull
 	@Enumerated(value = EnumType.STRING)
-	private EntranceStatus entranceStatus;
+	private EntranceStatus entranceStatus;	// 입장 상태
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "organization_id")
-	private Organization organization;
+	private Organization organization;		// 주점
 
+	@NotNull
 	@OneToOne
 	@JoinColumn(name = "customer_id")
-	private Customer customer;
+	private Customer customer;				// 대기자
+
+	private Integer headCount; 				// 인원수
+	private LocalDateTime entranceTime;     // 입장 시간
+	private Integer tableNumber;            // 배정받은 테이블 번호
 
 	@Builder
-	public Waiting(Integer headCount, LocalDateTime entranceTime, Integer tableNumber, Integer waitingNumber,
-		Organization organization, Customer customer, EntranceStatus entranceStatus){
+	public Waiting(Integer headCount, LocalDateTime entranceTime, Integer tableNumber,Organization organization,
+				   Customer customer, EntranceStatus entranceStatus){
 		this.headCount = headCount;
 		this.entranceTime = entranceTime;
 		this.tableNumber = tableNumber;
-		this.waitingNumber = waitingNumber;
 		this.organization = organization;
 		this.customer = customer;
 		this.entranceStatus = entranceStatus;
 	}
-
 }
