@@ -1,8 +1,13 @@
 package com.blossom.lineup.Waiting;
 
+import com.blossom.lineup.Member.CustomerRepository;
+import com.blossom.lineup.Member.entity.Customer;
+import com.blossom.lineup.Organization.OrganizationRepository;
 import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Waiting.entity.Waiting;
+import com.blossom.lineup.Waiting.entity.request.WaitingRequest;
 import com.blossom.lineup.Waiting.entity.response.CheckWaitingStatus;
+import com.blossom.lineup.Waiting.util.EntranceStatus;
 import com.blossom.lineup.base.Code;
 import com.blossom.lineup.base.exceptions.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +26,50 @@ import java.util.List;
 public class WaitingServiceImpl implements WaitingService{
 
     private final WaitingRepository waitingRepository;
+    private final CustomerRepository customerRepository;
+    private final OrganizationRepository organizationRepository;
 
     // TODO : Context Holder 구현 후, 권한 검사 추가 (ex- 내 대기번호가 아닌데 조회하는 경우)
     private Waiting findWaiting(Long waitingId){
         return waitingRepository.findById(waitingId)
                 .orElseThrow(()->new BusinessException(Code.WAITING_NOT_FOUND));
+    }
+
+    // todo : jwt로 구현한 후에 회원 정보 가져오는 부분 변경
+    private Customer findCustomer(){
+        return customerRepository.findById(1L)
+                .orElseThrow(()-> new BusinessException(Code.CUSTOMER_NOT_FOUND));
+    }
+
+    private Organization findOrganization(long id){
+        return organizationRepository.findById(id)
+                .orElseThrow(()-> new BusinessException(Code.ORGANIZATION_NOT_FOUND));
+    }
+
+
+    @Override
+    public void create(WaitingRequest request) {
+        Customer customer = findCustomer();
+        Organization organization = findOrganization(request.getOrganizationId());
+
+        // 내가 기존에 Waiting을 걸어놓은 곳이 있는지 확인. -> 2곳이상에 대기하려고 하면 error.
+        List<Waiting> checkBeforeWait = waitingRepository.findByCustomerAndEntranceStatus(customer,EntranceStatus.WAITING);
+        if (!checkBeforeWait.isEmpty()){
+            throw new BusinessException(Code.WAITING_DUPLICATE);
+        }
+
+        log.debug(customer.getUserName()+" 님이 "+organization.getName()+ "주점에 대기를 걸었습니다.");
+
+        Waiting waiting = Waiting.newWaiting(organization, customer, request.getHeadCount());
+        waitingRepository.save(waiting);
+    }
+
+    @Override
+    public void delete(Long waitingId) {
+        log.debug(waitingId+" 대기를 삭제했습니다.");
+
+        Waiting w = findWaiting(waitingId);
+        waitingRepository.delete(w);
     }
 
     @Override
