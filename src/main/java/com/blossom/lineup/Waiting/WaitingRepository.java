@@ -1,7 +1,9 @@
 package com.blossom.lineup.Waiting;
 
+import com.blossom.lineup.Member.entity.Customer;
 import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Waiting.entity.Waiting;
+import com.blossom.lineup.Waiting.util.EntranceStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +13,9 @@ import java.util.List;
 
 @Repository
 public interface WaitingRepository extends JpaRepository<Waiting, Long> {
+
+    // 내가 이전에 organization에 대기를 걸어 놓은적이 있는지 확인.
+    List<Waiting> findByCustomerAndEntranceStatus(Customer customer, EntranceStatus entranceStatus);
 
     // 나 이전의 대기 명단
     // (organization에 대기하고 있고(waiting) 내 id보다 작은 id를 가지고 있는 waiting 명단을 id 오름차순으로 정렬)
