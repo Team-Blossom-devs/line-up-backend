@@ -1,13 +1,9 @@
 package com.blossom.lineup.base;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
@@ -16,7 +12,7 @@ public abstract class BaseEntity {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	@Enumerated(value = EnumType.STRING)
-	private ActiveStatus activeStatus;
+	private ActiveStatus activeStatus = ActiveStatus.ACTIVATED;
 
 	@PrePersist
 	public void createdAt() {
