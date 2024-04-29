@@ -37,7 +37,7 @@ public class Waiting extends BaseEntity {
 	private Organization organization;		// 주점
 
 	@NotNull
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "customer_id")
 	private Customer customer;				// 대기자
 
