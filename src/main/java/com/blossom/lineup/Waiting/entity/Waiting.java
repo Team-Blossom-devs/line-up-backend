@@ -46,7 +46,7 @@ public class Waiting extends BaseEntity {
 
 	private LocalDateTime entranceTime;     // 입장 시간
 	private Integer tableNumber;            // 배정받은 테이블 번호
-	private Integer tableCnt;				// 배정받은 테이블 개수 (인원이 많은 경우)
+	private Integer tableCount;				// 배정받은 테이블 개수 (인원이 많은 경우)
 
 
 	private Waiting(EntranceStatus entranceStatus, Organization organization,
