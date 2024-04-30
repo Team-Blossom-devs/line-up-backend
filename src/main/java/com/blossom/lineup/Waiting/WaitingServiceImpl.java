@@ -58,7 +58,7 @@ public class WaitingServiceImpl implements WaitingService{
             throw new BusinessException(Code.WAITING_DUPLICATE);
         }
 
-        log.debug(customer.getUserName()+" 님이 "+organization.getName()+ "주점에 대기를 걸었습니다.");
+        log.info(customer.getUserName()+" 님이 "+organization.getName()+ "주점에 대기를 걸었습니다.");
 
         Waiting waiting = Waiting.newWaiting(organization, customer, request.getHeadCount());
         waitingRepository.save(waiting);
