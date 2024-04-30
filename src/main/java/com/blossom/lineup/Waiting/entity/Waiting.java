@@ -7,7 +7,6 @@ import com.blossom.lineup.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -38,22 +37,32 @@ public class Waiting extends BaseEntity {
 	private Organization organization;		// 주점
 
 	@NotNull
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "customer_id")
 	private Customer customer;				// 대기자
 
-	private Integer headCount; 				// 인원수
+	@NotNull
+	private int headCount; 				// 인원수
+
 	private LocalDateTime entranceTime;     // 입장 시간
 	private Integer tableNumber;            // 배정받은 테이블 번호
+	private Integer tableCount;				// 배정받은 테이블 개수 (인원이 많은 경우)
 
-	@Builder
-	public Waiting(Integer headCount, LocalDateTime entranceTime, Integer tableNumber,Organization organization,
-				   Customer customer, EntranceStatus entranceStatus){
+
+	private Waiting(EntranceStatus entranceStatus, Organization organization,
+					Customer customer, int headCount){
 		this.headCount = headCount;
-		this.entranceTime = entranceTime;
-		this.tableNumber = tableNumber;
 		this.organization = organization;
 		this.customer = customer;
 		this.entranceStatus = entranceStatus;
+	}
+
+	public static Waiting newWaiting(Organization organization, Customer customer, int headCount){
+		return new Waiting(
+				EntranceStatus.WAITING,
+				organization,
+				customer,
+				headCount
+		);
 	}
 }

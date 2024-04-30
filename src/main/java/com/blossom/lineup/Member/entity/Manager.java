@@ -18,6 +18,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,7 +41,7 @@ public class Manager extends Member{
 	}
 
 	@Override
-	public Waiting getWaiting() {
+	public List<Waiting> getWaiting() {
 		throw new RuntimeException("do not use");
 	}
 }
