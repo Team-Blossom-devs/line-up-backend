@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
 @AllArgsConstructor
-@JsonInclude(content = JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response<T> {
 
 	private String code;
@@ -34,15 +34,11 @@ public class Response<T> {
 	}
 
 	public static Response<Void> ok(){
-		return new Response<>(Code.OK.getCode(), Code.OK.getMessage());
+		return new Response<>(Code.OK.getCode());
 	}
 
 	public static <T> Response<T> ok(T data) {
-		return new Response<>(Code.OK.getCode(), Code.OK.getMessage(), data);
-	}
-
-	public static <T> Response<T> ok(String message, T data){
-		return new Response<>(Code.OK.getCode(), message, data);
+		return new Response<>(Code.OK.getCode(), data);
 	}
 
 	public static <E> Response<Void> fail(String code) {
