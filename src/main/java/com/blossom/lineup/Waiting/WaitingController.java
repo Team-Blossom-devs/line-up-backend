@@ -5,6 +5,7 @@ import com.blossom.lineup.Waiting.entity.response.CheckWaitingStatus;
 import com.blossom.lineup.base.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -16,7 +17,7 @@ public class WaitingController {
     private final WaitingService waitingService;
 
     @PostMapping("/waiting")
-    public Response<Void> create(@RequestBody WaitingRequest request){
+    public Response<Void> create(@Validated @RequestBody WaitingRequest request){
         log.debug("대기 생성");
 
         waitingService.create(request);

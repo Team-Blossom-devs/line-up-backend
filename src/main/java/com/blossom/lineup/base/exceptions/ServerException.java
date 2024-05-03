@@ -1,7 +1,9 @@
 package com.blossom.lineup.base.exceptions;
 
 import com.blossom.lineup.base.Code;
+import lombok.Getter;
 
+@Getter
 public class ServerException extends RuntimeException{
 
 	private Code code;

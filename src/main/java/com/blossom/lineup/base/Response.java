@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
 @AllArgsConstructor
-@JsonInclude(content = JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response<T> {
 
 	private String code;
@@ -51,6 +51,10 @@ public class Response<T> {
 
 	public static <E> Response<Void> fail(String code, String message) {
 		return new Response<>(code, message);
+	}
+
+	public static <E> Response<E> fail(String code, String message, E data){
+		return new Response<>(code,message,data);
 	}
 
 }
