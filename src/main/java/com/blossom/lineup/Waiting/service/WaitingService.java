@@ -1,4 +1,4 @@
-package com.blossom.lineup.Waiting;
+package com.blossom.lineup.Waiting.service;
 
 import com.blossom.lineup.Waiting.entity.request.WaitingRequest;
 import com.blossom.lineup.Waiting.entity.response.CheckWaitingStatus;

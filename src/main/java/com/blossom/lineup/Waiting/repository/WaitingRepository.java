@@ -1,4 +1,4 @@
-package com.blossom.lineup.Waiting;
+package com.blossom.lineup.Waiting.repository;
 
 import com.blossom.lineup.Member.entity.Customer;
 import com.blossom.lineup.Organization.entity.Organization;
