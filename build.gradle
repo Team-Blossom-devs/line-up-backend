@@ -28,6 +28,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Redis 추가
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// QR 코드 생성을 위한 google zxing 추가
+	implementation 'com.google.zxing:core:3.5.2'
+	implementation 'com.google.zxing:javase:3.5.2'
+
 	implementation 'org.springframework.kafka:spring-kafka'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'

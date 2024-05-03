@@ -1,7 +1,8 @@
-package com.blossom.lineup.Waiting;
+package com.blossom.lineup.Waiting.controller;
 
 import com.blossom.lineup.Waiting.entity.request.WaitingRequest;
 import com.blossom.lineup.Waiting.entity.response.CheckWaitingStatus;
+import com.blossom.lineup.Waiting.service.WaitingService;
 import com.blossom.lineup.base.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

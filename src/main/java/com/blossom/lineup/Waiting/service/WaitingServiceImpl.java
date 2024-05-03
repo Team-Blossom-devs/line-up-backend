@@ -1,4 +1,4 @@
-package com.blossom.lineup.Waiting;
+package com.blossom.lineup.Waiting.service;
 
 import com.blossom.lineup.Member.CustomerRepository;
 import com.blossom.lineup.Member.entity.Customer;
@@ -7,6 +7,7 @@ import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Waiting.entity.Waiting;
 import com.blossom.lineup.Waiting.entity.request.WaitingRequest;
 import com.blossom.lineup.Waiting.entity.response.CheckWaitingStatus;
+import com.blossom.lineup.Waiting.repository.WaitingRepository;
 import com.blossom.lineup.Waiting.util.EntranceStatus;
 import com.blossom.lineup.base.Code;
 import com.blossom.lineup.base.exceptions.BusinessException;
