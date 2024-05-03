@@ -9,6 +9,9 @@ public enum Code {
 
 	// OK
 	OK(HttpStatus.OK, "COM-000", "ok"),
+	JSON_TYPE_FAIL(HttpStatus.BAD_REQUEST, "COM-400", "JSON 타입이 맞지 않습니다."),
+	VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "COM-400", "입력 형식이 올바르지 않습니다."),
+	SERVER_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "COM-500", "서버 내의 문제가 발생했습니다."),
 
 	// CST : Customer entity error
 	CUSTOMER_NOT_FOUND(HttpStatus.BAD_REQUEST, "CST-001", "회원을 찾을 수 없습니다."),
