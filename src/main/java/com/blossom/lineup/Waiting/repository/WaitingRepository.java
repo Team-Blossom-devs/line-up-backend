@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface WaitingRepository extends JpaRepository<Waiting, Long> {
+public interface WaitingRepository extends JpaRepository<Waiting, Long>, CustomWaitingRepository {
 
     // 내가 이전에 organization에 대기를 걸어 놓은적이 있는지 확인.
     List<Waiting> findByCustomerAndEntranceStatus(Customer customer, EntranceStatus entranceStatus);
