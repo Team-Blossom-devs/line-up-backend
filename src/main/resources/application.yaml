@@ -9,4 +9,5 @@ spring:
         - prod
     include:
       - kafka
+      - redis
 
