@@ -25,12 +25,13 @@ public class Organization extends BaseEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "organization_id")
 	private Long id;
-	private String introduce;
-	private String name;
-	private Integer seatCount;
+	private String name;      	// 주점 이름
+	private String introduce; 	// 주점 소개
+	private String location;    // 위치
+	private Integer tableCount; // 테이블 개수
 
 	@NotNull
-	private Integer tableTimeLimit; // 테이블 이용 제한 시간
+	private Integer tableTimeLimit; // 테이블 이용 제한 시간(분)
 
 	@OneToOne
 	@JoinColumn(name = "manager_id")
@@ -40,10 +41,11 @@ public class Organization extends BaseEntity {
 	private Set<Waiting> waitings;
 
 	@Builder
-	public Organization(String name, Integer seatCount, Integer tableTimeLimit, String introduce, Manager manager) {
+	public Organization(String name, String introduce, String location, Integer tableCount, Integer tableTimeLimit, Manager manager) {
 		this.name = name;
-		this.seatCount = seatCount;
 		this.introduce = introduce;
+		this.location = location;
+		this.tableCount = tableCount;
 		this.manager = manager;
 		this.waitings = new HashSet<>();
 		this.tableTimeLimit = tableTimeLimit;
