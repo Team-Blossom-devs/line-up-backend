@@ -57,6 +57,22 @@ public class Waiting extends BaseEntity {
 		this.entranceStatus = entranceStatus;
 	}
 
+	public void updateEntranceStatus(EntranceStatus entranceStatus) {
+
+		this.entranceStatus = entranceStatus;
+
+		if (entranceStatus != EntranceStatus.WAITING) {
+			this.entranceTime = LocalDateTime.now();
+		} else {
+			this.entranceTime = null;
+		}
+	}
+
+	public void updateTables(Integer tableNumber, Integer tableCount) {
+		this.tableNumber = tableNumber;
+		this.tableCount = tableCount;
+	}
+
 	public static Waiting newWaiting(Organization organization, Customer customer, int headCount){
 		return new Waiting(
 				EntranceStatus.WAITING,
