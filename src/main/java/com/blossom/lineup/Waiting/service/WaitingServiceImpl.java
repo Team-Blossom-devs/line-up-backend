@@ -2,7 +2,7 @@ package com.blossom.lineup.Waiting.service;
 
 import com.blossom.lineup.Member.CustomerRepository;
 import com.blossom.lineup.Member.entity.Customer;
-import com.blossom.lineup.Organization.OrganizationRepository;
+import com.blossom.lineup.Organization.repository.OrganizationRepository;
 import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Waiting.entity.Waiting;
 import com.blossom.lineup.Waiting.entity.request.WaitingRequest;
@@ -105,12 +105,12 @@ public class WaitingServiceImpl implements WaitingService{
                 }).toList());
 
         // 주점에서 다루는 테이블보다 테이블 이용 개수가 적으면, List에 0분 남은 개수만큼 추가.
-        while(remainTableTimes.size() < o.getSeatCount()){
+        while(remainTableTimes.size() < o.getTableCount()){
             remainTableTimes.add(0,0);
         }
 
-        int quotient = beforeMeCnt / o.getSeatCount();  // 몫 : 모든 테이블이 몇 번 빠져야 하는지
-        int remainder = beforeMeCnt % o.getSeatCount(); // 나머지 : 몇번째 테이블에 들어가게 될지
+        int quotient = beforeMeCnt / o.getTableCount();  // 몫 : 모든 테이블이 몇 번 빠져야 하는지
+        int remainder = beforeMeCnt % o.getTableCount(); // 나머지 : 몇번째 테이블에 들어가게 될지
 
         int expactWaitingTime = quotient * o.getTableTimeLimit() + remainTableTimes.get(remainder);
 
