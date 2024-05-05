@@ -3,6 +3,7 @@ package com.blossom.lineup.Waiting.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Waiting.entity.QWaiting;
 import com.blossom.lineup.Waiting.entity.Waiting;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,14 +18,17 @@ public class CustomWaitingRepositoryImpl implements CustomWaitingRepository {
 	private final QWaiting qWaiting = QWaiting.waiting;
 
 	@Override
-	public List<Waiting> findWaitingByCursor(LocalDateTime cursorTime, Long cursorId, int size) {
+	public List<Waiting> findWaitingByCursor(Long cursor, Organization organization, int size) {
 
-		BooleanExpression timeInitiate = cursorTime == null ? null : qWaiting.updatedAt.lt(cursorTime);
-		BooleanExpression idInitiate = cursorId == null ? null : qWaiting.id.lt(cursorId);
+		BooleanExpression cursorInitiate = cursor == null ? null : qWaiting.id.gt(cursor);
 
 		return query.selectFrom(qWaiting)
-			.where(timeInitiate, idInitiate)
-			.orderBy(qWaiting.updatedAt.desc(), qWaiting.id.desc())
+			.leftJoin(qWaiting.organization)
+			.fetchJoin()
+			.leftJoin(qWaiting.customer)
+			.fetchJoin()
+			.where(cursorInitiate, qWaiting.organization.eq(organization))
+			.orderBy(qWaiting.updatedAt.asc(), qWaiting.id.desc())
 			.limit(size + 1)
 			.fetch();
 	}
