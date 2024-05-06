@@ -27,7 +27,14 @@ public enum Code {
 	ENTRANCE_TIME_IS_NULL(HttpStatus.BAD_REQUEST, "WAT-501", "입장시간이 null 인 테이블이 존재합니다."),
 
 	// KFK : Kafka error
-	CONSUME_DATA_NOT_FOUND(HttpStatus.BAD_REQUEST, "KFK-001", "클러스터에서 오류가 발생했습니다. 로그를 확인해주세요.");
+	CONSUME_DATA_NOT_FOUND(HttpStatus.BAD_REQUEST, "KFK-001", "클러스터에서 오류가 발생했습니다. 로그를 확인해주세요."),
+
+	// MEM : Member Entity error
+	MEMBER_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "MEM-001", "유효하지 않은 토큰입니다."),
+	MANAGER_PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, "MEM-100", "비밀번호가 일치하지 않습니다."),
+	MANAGER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEM-101", "일치하는 매니저가 없습니다."),
+	MEMBER_LOGIN_REQUIRED(HttpStatus.BAD_REQUEST, "MEM-102", "로그인 후 다시 시도해주세요."),
+	MEMBER_LOGIN_FAIL(HttpStatus.BAD_REQUEST, "MEM-103", "로그인에 실패했습니다.");
 
 
 	private final HttpStatus httpStatus;
