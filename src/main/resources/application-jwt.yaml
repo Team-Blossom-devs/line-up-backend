@@ -1,14 +1,10 @@
 jwt:
   secret: TMKMhLAYiR7ipWkTFw7bJujt8uFzuh83b21gx9Dteljut8
-  #set token expiration period in minutes
-  access:
-    expiration: 30 #30분
-    header: Authorization
+  access-expiration: 3600000 #1시간
+  access-header: Authorization
 
-  refresh:
-    expiration: 20160 #2주일
-    set_cookie: refreshToken
+  refresh-expiration: 1209600000 #2주일
+  refresh-setCookie: refreshToken
 
-  cookie:
-    expiration: 10080 #1주일
+  cookie-expiration: 1209600000 #1주일
 
