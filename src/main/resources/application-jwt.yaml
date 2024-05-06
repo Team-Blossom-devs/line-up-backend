@@ -6,5 +6,5 @@ jwt:
   refresh-expiration: 1209600000 #2주일
   refresh-setCookie: refreshToken
 
-  cookie-expiration: 1209600000 #1주일
+  cookie-expiration: 604800000  #1주일
 
