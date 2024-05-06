@@ -1,6 +1,7 @@
 package com.blossom.lineup.redis;
 
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -44,7 +45,7 @@ public class RedisService {
 	 * @param data : byte 배열 value
 	 */
 	public void setByteData(String key, byte[] data) {
-		redisTemplate.opsForValue().set(key, data);
+		redisTemplate.opsForValue().set(key, Base64.getEncoder().encodeToString(data));
 	}
 
 	/**
@@ -54,7 +55,7 @@ public class RedisService {
 	 * @param duration : TTL 설정 시간
 	 */
 	public void setByteData(String key, byte[] data, Duration duration) {
-		redisTemplate.opsForValue().set(key, data, duration);
+		redisTemplate.opsForValue().set(key, Base64.getEncoder().encodeToString(data), duration);
 	}
 
 	/**
@@ -72,7 +73,7 @@ public class RedisService {
 	 * @return : Nullable 한 byte 배열 데이터를 Optional 로 반환
 	 */
 	public Optional<byte[]> getByteData(String key) {
-		return Optional.ofNullable((byte[]) redisTemplate.opsForValue().get(key));
+		return Optional.ofNullable(Base64.getDecoder().decode((String) redisTemplate.opsForValue().get(key)));
 	}
 
 	/**
