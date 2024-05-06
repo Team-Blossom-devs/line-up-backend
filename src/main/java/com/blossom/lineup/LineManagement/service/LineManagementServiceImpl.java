@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.blossom.lineup.LineManagement.dto.request.EntranceCompleteRequest;
+import com.blossom.lineup.LineManagement.dto.response.EntranceSuccessResponse;
 import com.blossom.lineup.LineManagement.dto.response.LineListResponse;
 import com.blossom.lineup.LineManagement.dto.response.WaitingDetailsResponse;
 import com.blossom.lineup.LineManagement.util.EntranceTimeLimit;
@@ -42,12 +43,13 @@ public class LineManagementServiceImpl implements LineManagementService {
 	private final WaitingRepository waitingRepository;
 	private final RedisService redisService;
 
-	//TODO: context holder 로 대체
+	// TODO: context holder 로 대체
 	private final OrganizationRepository organizationRepository;
 
-	//TODO: 해당 url들 환경변수화
-	public static final String redirectUrl = "http://locahost:8080";
-	public static final String qrCodeBaseUrl = "http://localhost:8080/pass/";
+	// TODO: 해당 url들 환경변수화
+	// 프론트의 관리자 페이지로 리다이렉션
+	public static final String redirectUrl = "http://localhost:8080";
+	public static final String qrCodeBaseUrl = "http://localhost:8080/admin/entrance-process";
 	public static final String redisMemberQrKey = "member:qr:";
 
 
@@ -104,7 +106,7 @@ public class LineManagementServiceImpl implements LineManagementService {
 	}
 
 	@Override
-	public ResponseEntity<Void> changeToComplete(EntranceCompleteRequest request) {
+	public Response<EntranceSuccessResponse> changeToComplete(EntranceCompleteRequest request) {
 		// TODO: 권한 검사?
 
 		Waiting waiting = waitingRepository.findById(request.getId()).stream()
@@ -114,9 +116,9 @@ public class LineManagementServiceImpl implements LineManagementService {
 		waiting.updateTables(request.getTableNumber(), request.getTableCount());
 		waiting.updateEntranceStatus(EntranceStatus.COMPLETE);
 
-		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
-			.header("Location", redirectUrl)
-			.build();
+		redisService.deleteData(redisMemberQrKey + request.getId());
+
+		return Response.ok(new EntranceSuccessResponse(redirectUrl));
 	}
 
 	@Override
