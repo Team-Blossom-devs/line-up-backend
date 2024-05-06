@@ -32,6 +32,9 @@ dependencies {
 	// Redis 추가
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// thymeleaf 추가
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 	// QR 코드 생성을 위한 google zxing 추가
 	implementation 'com.google.zxing:core:3.5.2'
 	implementation 'com.google.zxing:javase:3.5.2'
