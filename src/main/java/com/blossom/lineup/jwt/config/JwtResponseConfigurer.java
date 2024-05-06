@@ -3,7 +3,6 @@ package com.blossom.lineup.jwt.config;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
@@ -14,21 +13,16 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class JwtResponseConfigurer {
 
-    @Qualifier("accessHeader")
-    private final String accessHeader;
-    @Qualifier("refreshSetCookie")
-    private final String refreshSetCookie;
-    @Qualifier("cookieExpire")
-    private final Long cookieExpire;
+    private final JwtConfiguration jwtConfiguration;
 
     public void configureTokenResponse(HttpServletResponse response, String accessToken, String refreshToken) {
 
-        response.setHeader(accessHeader, accessToken);
+        response.setHeader(jwtConfiguration.getAccessHeader(), accessToken);
 
-        ResponseCookie cookie = ResponseCookie.from(refreshSetCookie, refreshToken)
+        ResponseCookie cookie = ResponseCookie.from(jwtConfiguration.getRefreshSetCookie(), refreshToken)
                 .path("/")
                 .httpOnly(true)
-                .maxAge(TimeUnit.MINUTES.toMillis(cookieExpire))
+                .maxAge(TimeUnit.MINUTES.toMillis(jwtConfiguration.getCookieExpiration()))
                 .secure(true)
                 .build();
 

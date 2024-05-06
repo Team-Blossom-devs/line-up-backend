@@ -6,12 +6,15 @@ import com.blossom.lineup.Member.ManagerRepository;
 import com.blossom.lineup.Member.util.Role;
 import com.blossom.lineup.base.Code;
 import com.blossom.lineup.base.exceptions.BusinessException;
+import com.blossom.lineup.jwt.config.JwtConfiguration;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -28,20 +31,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private final SecretKey key;
-    @Qualifier("accessTokenExpire")
-    private final Long accessTokenExpire;
-    @Qualifier("refreshTokenExpire")
-    private final Long refreshTokenExpire;
-    @Qualifier("accessHeader")
-    private final String accessHeader;
-    @Qualifier("refreshSetCookie")
-    private final String refreshSetCookie;
+
+    private final JwtConfiguration jwtConfiguration;
     private final ManagerRepository managerRepository;
     private final CustomerRepository customerRepository;
 
     private static final String GRANT_TYPE = "Bearer ";
     private static final String REFRESH_TOKEN_SUB = "RefreshToken";
+
+    private SecretKey key;
+
+    @PostConstruct
+    public void init() {
+        byte[] keyBytes = Decoders.BASE64URL.decode(jwtConfiguration.getSecret());
+        key = Keys.hmacShaKeyFor(keyBytes);
+    }
 
     /**
      * JWT token 생성 메서드
@@ -60,15 +64,16 @@ public class JwtTokenProvider {
                 .claim("uuid", principal.getUuid())
                 .claim("role", principal.getRole())
                 .signWith(key, SignatureAlgorithm.HS256)
-                .setExpiration(Date.from(Instant.now().plusMillis(accessTokenExpire)))
+                .setExpiration(Date.from(Instant.now().plusMillis(jwtConfiguration.getAccessExpiration())))
                 .compact();
+
     }
 
     public String generateRefreshToken() {
 
         return Jwts.builder()
                 .setSubject(REFRESH_TOKEN_SUB)
-                .setExpiration(Date.from(Instant.now().plusMillis(refreshTokenExpire)))
+                .setExpiration(Date.from(Instant.now().plusMillis(jwtConfiguration.getRefreshExpiration())))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -78,7 +83,7 @@ public class JwtTokenProvider {
      * 이때 AccessToken 은 요청 header 에서, RefreshToken 은 cookie 에서 추출한다.
      */
     public Optional<String> extractAccessToken(HttpServletRequest request) {
-        return Optional.of(request.getHeader(accessHeader))
+        return Optional.of(request.getHeader(jwtConfiguration.getAccessHeader()))
                 .filter(token ->
                         token.startsWith(GRANT_TYPE))
                 .map(token ->
@@ -88,7 +93,7 @@ public class JwtTokenProvider {
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
         return Arrays.stream(request.getCookies())
                 .filter(cookie ->
-                        cookie.getName().equals(refreshSetCookie))
+                        cookie.getName().equals(jwtConfiguration.getRefreshSetCookie()))
                 .findFirst()
                 .map(Cookie::getValue);
     }
