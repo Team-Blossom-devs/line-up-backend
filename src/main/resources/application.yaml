@@ -10,4 +10,7 @@ spring:
     include:
       - kafka
       - redis
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 

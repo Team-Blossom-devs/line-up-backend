@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/entrance-info-style.css}">
+    <title>입장 정보 입력</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/entrance.js"></script>
+    <div id="container">
+        <div id="container-head">
+            Line-Up 어드민
+        </div>
+        <div id="container-table-number">
+            <span>테이블 번호</span>
+            <input type="number" id="table-number-input">
+        </div>
+        <div id="container-table-count">
+            <span>테이블 개수</span>
+            <input type="number" id="table-count-input" value="1">
+        </div>
+        <button id="container-footer" th:attr="data-id=${id}" onclick="sendData(this.getAttribute('data-id'), getInputValue('table-number-input'), getInputValue('table-count-input'))">전송</button>
+    </div>
+</body>
+</html>

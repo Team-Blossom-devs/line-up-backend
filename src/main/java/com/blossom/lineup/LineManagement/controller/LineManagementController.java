@@ -2,7 +2,6 @@ package com.blossom.lineup.LineManagement.controller;
 
 import java.io.IOException;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blossom.lineup.LineManagement.dto.request.EntranceCompleteRequest;
+import com.blossom.lineup.LineManagement.dto.response.EntranceSuccessResponse;
 import com.blossom.lineup.LineManagement.dto.response.LineListResponse;
 import com.blossom.lineup.LineManagement.dto.response.WaitingDetailsResponse;
 import com.blossom.lineup.LineManagement.service.LineManagementService;
@@ -37,7 +37,7 @@ public class LineManagementController {
 	}
 
 	@PatchMapping("/complete")
-	ResponseEntity<Void> entranceComplete(@Validated @RequestBody EntranceCompleteRequest request) {
+	Response<EntranceSuccessResponse> entranceComplete(@Validated @RequestBody EntranceCompleteRequest request) {
 
 		return lineManagementService.changeToComplete(request);
 	}
