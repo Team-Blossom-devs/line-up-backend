@@ -49,7 +49,7 @@ public class LineManagementServiceImpl implements LineManagementService {
 	// TODO: 해당 url들 환경변수화
 	// 프론트의 관리자 페이지로 리다이렉션
 	public static final String redirectUrl = "http://localhost:8080";
-	public static final String qrCodeBaseUrl = "http://localhost:8080/admin/entrance-process";
+	public static final String qrCodeBaseUrl = "http://localhost:8080/admin/entrance-process/";
 	public static final String redisMemberQrKey = "member:qr:";
 
 
