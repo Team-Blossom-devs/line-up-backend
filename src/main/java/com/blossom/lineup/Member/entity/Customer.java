@@ -25,12 +25,18 @@ public class Customer extends Member{
 	@Column(name = "customer_id")
 	private Long id;
 
+	private String email;
+
+	private Long socialId;
+
 	@OneToMany(mappedBy = "customer")
 	private List<Waiting> waiting = new ArrayList<>();
 
 	@Builder
-	public Customer(String userName, String phoneNumber, Long socialId, Role role, String email, Waiting waiting){
-		super(userName, phoneNumber, socialId, role, email);
+	public Customer(String userName, String phoneNumber, String email, String refreshToken, Long socialId) {
+		super(userName, phoneNumber, Role.USER, refreshToken);
+		this.email = email;
+		this.socialId = socialId;
 	}
 
 	@Override
