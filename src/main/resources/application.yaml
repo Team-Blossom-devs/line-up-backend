@@ -10,4 +10,4 @@ spring:
     include:
       - kafka
       - redis
-      - jwt
+
