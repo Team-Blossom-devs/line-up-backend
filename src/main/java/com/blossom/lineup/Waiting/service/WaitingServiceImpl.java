@@ -90,7 +90,8 @@ public class WaitingServiceImpl implements WaitingService{
         // 내가 대기 걸어둔 게 없을 때 -> 마지막 대기 기준으로 대기현황조회.
         if(checkBeforeWait.isEmpty()){
             // 마지막 대기자 기준으로 대기 현황 조회
-            Waiting last = waitingRepository.findFirstByIdAndEntranceStatusDesc().orElse(null);
+            Waiting last = waitingRepository
+                    .findFirstByEntranceStatusOrderByCreatedAtDesc(EntranceStatus.WAITING).orElse(null);
             return Response.ok(myCurrentWaiting(last, organizationId));
 
         } else if(checkBeforeWait.size()==1){ // 걸어둔 대기가 1개일 때, 상태값에 따라 다르게 처리.
@@ -111,14 +112,16 @@ public class WaitingServiceImpl implements WaitingService{
 
     @Override
     public WaitingResponse myCurrentWaiting(Waiting waiting, Long organizationId) { // 대기 현황 조회
-        log.debug("대기 현황 조회 : "+waiting.getId());
 
         Organization o = findOrganization(organizationId);
         int beforeMeCnt = 0; // 대기가 하나도 없으면 내 앞에 대기 0팀.
         String waitingStatus = "NOT-WAITING";
+        Integer headCount = null;
 
         // waiting이 있으면 내 대기번호 반환
         if(waiting != null){
+            log.debug("대기 현황 조회 : "+waiting.getId());
+            headCount = waiting.getHeadCount();
             List<Waiting> beforeMe = waitingRepository.findBeforeMyWaiting(o, waiting.getId()); // 나 이전의 대기 명단
             beforeMeCnt = beforeMe.size();
             waitingStatus = EntranceStatus.WAITING.getEntranceStatus();
@@ -157,7 +160,7 @@ public class WaitingServiceImpl implements WaitingService{
 
         int expactWaitingTime = quotient * o.getTableTimeLimit() + remainTableTimes.get(remainder);
 
-        return WaitingResponse.of(waitingStatus, beforeMeCnt, expactWaitingTime, waiting.getHeadCount());
+        return new WaitingResponse(waitingStatus, beforeMeCnt, expactWaitingTime, headCount);
     }
 
     @Override
