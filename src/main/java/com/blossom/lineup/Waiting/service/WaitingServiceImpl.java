@@ -2,8 +2,8 @@ package com.blossom.lineup.Waiting.service;
 
 import com.blossom.lineup.Member.CustomerRepository;
 import com.blossom.lineup.Member.entity.Customer;
-import com.blossom.lineup.Organization.repository.OrganizationRepository;
 import com.blossom.lineup.Organization.entity.Organization;
+import com.blossom.lineup.Organization.repository.OrganizationRepository;
 import com.blossom.lineup.Waiting.entity.Waiting;
 import com.blossom.lineup.Waiting.entity.request.WaitingRequest;
 import com.blossom.lineup.Waiting.entity.response.CheckWaitingStatus;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -89,25 +90,28 @@ public class WaitingServiceImpl implements WaitingService{
 
         // 정렬된 각각의 테이블의 남은 이용 시간(분)
         List<Integer> remainTableTimes = new java.util.ArrayList<>(usingTables.stream()
-                .map(waiting -> {
-                    // 대기시간이 null인 테이블이 존재하면, exception.
-                    if (waiting.getEntranceTime() == null) {
-                        throw new BusinessException(Code.ENTRANCE_TIME_IS_NULL);
-                    }
-                    //
-                    else {
-                        LocalDateTime entranceTime = waiting.getEntranceTime();
-                        LocalDateTime currentTime = LocalDateTime.now();
-                        Duration duration = Duration.between(entranceTime, currentTime);
+            .flatMap(w ->{
+                // 대기시간이 null인 테이블이 존재하면, exception
+                if(w.getEntranceTime()==null){
+                    throw new BusinessException(Code.ENTRANCE_TIME_IS_NULL);
+                } else {
+                    LocalDateTime entranceTime = w.getEntranceTime();
+                    LocalDateTime currentTime = LocalDateTime.now();
+                    Duration duration = Duration.between(entranceTime,currentTime);
+                    int minutes = (int) duration.toMinutes(); // 분단위로 변환
+                    int remainMinutes = Math.max(o.getTableTimeLimit() - minutes, 0);
 
-                        return (int) duration.toMinutes(); // 분단위로 변환
-                    }
-                }).toList());
+                    return java.util.stream.IntStream.range(0, w.getTableCount())
+                            .mapToObj(i -> remainMinutes); // 각 tableCnt 개수만큼 지속시간을 반복
+                }
+            }).collect(Collectors.toList()));
 
         // 주점에서 다루는 테이블보다 테이블 이용 개수가 적으면, List에 0분 남은 개수만큼 추가.
         while(remainTableTimes.size() < o.getTableCount()){
             remainTableTimes.add(0,0);
         }
+
+        log.info("대기시간 : "+remainTableTimes+" / "+o.getTableCount());
 
         int quotient = beforeMeCnt / o.getTableCount();  // 몫 : 모든 테이블이 몇 번 빠져야 하는지
         int remainder = beforeMeCnt % o.getTableCount(); // 나머지 : 몇번째 테이블에 들어가게 될지
