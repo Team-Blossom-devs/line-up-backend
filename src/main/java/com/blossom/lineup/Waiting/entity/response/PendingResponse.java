@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PendingResponse {
+    String waitingStatus;
     long remainMinutes; // 입장까지 남은 시간(분)
-    String qrCodeId; // qr코드 아이디
+    String qrCodekey; // qr코드 key
 }
