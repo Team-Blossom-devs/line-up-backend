@@ -16,7 +16,8 @@ import java.util.Optional;
 @Repository
 public interface WaitingRepository extends JpaRepository<Waiting, Long>, CustomWaitingRepository {
 
-    Optional<Waiting> findFirstByIdAndEntranceStatusDesc(); // 가장 최근의 Waiting 조회
+    // 가장 최근의 Waiting 조회
+    Optional<Waiting> findFirstByEntranceStatusOrderByCreatedAtDesc(EntranceStatus status);
 
     // 내가 이전에 organization에 대기를 걸어 놓은적이 있는지 확인.
     List<Waiting> findByCustomerAndEntranceStatusIn(Customer customer, Collection<EntranceStatus> statuses);
