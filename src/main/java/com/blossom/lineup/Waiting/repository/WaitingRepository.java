@@ -9,13 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
 public interface WaitingRepository extends JpaRepository<Waiting, Long>, CustomWaitingRepository {
 
     // 내가 이전에 organization에 대기를 걸어 놓은적이 있는지 확인.
-    List<Waiting> findByCustomerAndEntranceStatus(Customer customer, EntranceStatus entranceStatus);
+    List<Waiting> findByCustomerAndEntranceStatusIn(Customer customer, Collection<EntranceStatus> statuses);
 
     // 나 이전의 대기 명단
     // (organization에 대기하고 있고(waiting) 내 id보다 작은 id를 가지고 있는 waiting 명단을 id 오름차순으로 정렬)

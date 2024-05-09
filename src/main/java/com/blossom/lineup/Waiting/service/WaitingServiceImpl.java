@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,9 @@ public class WaitingServiceImpl implements WaitingService{
         Organization organization = findOrganization(request.getOrganizationId());
 
         // 내가 기존에 Waiting을 걸어놓은 곳이 있는지 확인. -> 2곳이상에 대기하려고 하면 error.
-        List<Waiting> checkBeforeWait = waitingRepository.findByCustomerAndEntranceStatus(customer,EntranceStatus.WAITING);
+        List<EntranceStatus> statuses = Arrays.asList(EntranceStatus.WAITING, EntranceStatus.PENDING);
+        List<Waiting> checkBeforeWait = waitingRepository.findByCustomerAndEntranceStatusIn(customer,statuses);
+
         if (!checkBeforeWait.isEmpty()){
             throw new BusinessException(Code.WAITING_DUPLICATE);
         }
