@@ -8,5 +8,5 @@ import lombok.Getter;
 public class PendingResponse {
     String waitingStatus;
     long remainMinutes; // 입장까지 남은 시간(분)
-    String qrCodekey; // qr코드 key
+    long waitingId;     // qr-code key를 위한 waitingId
 }
