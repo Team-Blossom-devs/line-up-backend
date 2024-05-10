@@ -18,7 +18,7 @@ public class OrganizationServiceImpl implements OrganizationService{
     private final OrganizationRepository organizationRepository;
 
     @Override
-    public OrganizationSearchList getOrganizations(String searchTerm, int pageNum) {
+    public OrganizationSearchList searchOrganizations(String searchTerm, int pageNum) {
         log.debug("주점 검색 : %"+searchTerm+"% "+pageNum+"p");
 
         // pageNum은 0페이지 부터 시작, 10개씩 보여줌.
