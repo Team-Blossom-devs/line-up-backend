@@ -23,6 +23,6 @@ public class OrganizationController {
             @RequestParam(value = "searchTerm", defaultValue = "") String searchTerm,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum
     ){
-        return Response.ok(organizationService.getOrganizations(searchTerm,pageNum));
+        return Response.ok(organizationService.searchOrganizations(searchTerm,pageNum));
     }
 }
