@@ -110,8 +110,13 @@ public class WaitingServiceImpl implements WaitingService{
         }
     }
 
-    @Override
-    public WaitingResponse myCurrentWaiting(Waiting waiting, Long organizationId) { // 대기 현황 조회
+    /**
+     * 대기 현황 조회
+     * @param waiting
+     * @param organizationId
+     * @return
+     */
+    private WaitingResponse myCurrentWaiting(Waiting waiting, Long organizationId) {
 
         Organization o = findOrganization(organizationId);
         int beforeMeCnt = 0; // 대기가 하나도 없으면 내 앞에 대기 0팀.
@@ -163,16 +168,18 @@ public class WaitingServiceImpl implements WaitingService{
         return new WaitingResponse(waitingStatus, beforeMeCnt, expactWaitingTime, headCount);
     }
 
-    @Override
-    public PendingResponse getPendingStatus(Waiting waiting) {
+    /**
+     * 입장중 상태 조회
+     * @param waiting
+     * @return
+     */
+    private PendingResponse getPendingStatus(Waiting waiting) {
         String waitingStatus = EntranceStatus.PENDING.getEntranceStatus();
 
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(now, waiting.getUpdatedAt());
-        long remainMinutes = Math.max(0, duration.toMinutes());
+        long remainMinutes = Math.max(0, duration.toMinutes()); // 남은시간 or 0 (분)
 
-        String key = ""+waiting.getId();
-
-        return new PendingResponse(waitingStatus, remainMinutes, key);
+        return new PendingResponse(waitingStatus, remainMinutes, waiting.getId());
     }
 }
