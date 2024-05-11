@@ -17,7 +17,7 @@ public class OrganizationSearchList {
     private int currentPage; // 현재 페이지
     private int totalPages; // 모든 페이지 수
     private int currentPageElementCount; // 현재 페이지의 주점 개수
-    private List<OrganizationDto> organizationDtoList = new ArrayList<>();
+    private List<OrganizationListDto> organizationListDtoList = new ArrayList<>();
 
     public static OrganizationSearchList of(Page<Organization> organizations){
         return new OrganizationSearchList(
@@ -26,7 +26,7 @@ public class OrganizationSearchList {
                 organizations.getTotalPages(),
 
                 organizations.getContent().stream()
-                        .map(OrganizationDto::of).collect(Collectors.toList())
+                        .map(OrganizationListDto::of).collect(Collectors.toList())
         );
     }
 }

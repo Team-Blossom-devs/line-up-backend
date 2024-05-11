@@ -1,21 +1,22 @@
 package com.blossom.lineup.Organization.entity.response;
 
 import com.blossom.lineup.Organization.entity.Organization;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
-public class OrganizationDto {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class OrganizationListDto {
+    private long id;
     private String name;
-    private String introduce;
     private String location;
-    private Integer tableCount;
+    private int tableCount;
 
-    public static OrganizationDto of(Organization o){
-        return new OrganizationDto(
+    public static OrganizationListDto of(Organization o){
+        return new OrganizationListDto(
+                o.getId(),
                 o.getName(),
-                o.getIntroduce(),
                 o.getLocation(),
                 o.getTableCount()
         );
