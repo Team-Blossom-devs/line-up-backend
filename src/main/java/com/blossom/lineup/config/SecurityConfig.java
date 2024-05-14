@@ -1,7 +1,6 @@
 package com.blossom.lineup.config;
 
 import com.blossom.lineup.Member.CustomUserDetailsService;
-import com.blossom.lineup.Member.ManagerRepository;
 import com.blossom.lineup.Member.util.Role;
 import com.blossom.lineup.filter.CustomJsonAuthenticationFilter;
 import com.blossom.lineup.handler.LoginFailureHandler;
@@ -50,7 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/","/css/**","/images/**", "/js/**",
                                 "/index.html", "/favicon.ico").permitAll() // 일반 경로 허용
                         .requestMatchers("/api/sign-in/manager").permitAll() // 로그인 및 회원가입 경로 허용
-                        .requestMatchers("/api/manager").hasRole(Role.MANAGER.getRole()) // MANAGER 역할을 가진 사용자만 접근 가능
+                        .requestMatchers("/api/manager/**").hasRole(Role.MANAGER.getRole()) // MANAGER 역할을 가진 사용자만 접근 가능
                         .anyRequest().authenticated()) // 그 외 모든 요청은 인증 요구
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // 기본 HTTP 인증 비활성화
