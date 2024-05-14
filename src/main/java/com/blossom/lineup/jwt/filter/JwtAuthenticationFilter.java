@@ -157,6 +157,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + member.getRole().getRole()));
 
         CustomUserDetails customUserDetails = CustomUserDetails.userDetailsBuilder()
+                .id(member.getId())
                 .username(username)
                 .password(password)
                 .authorities(authorities)

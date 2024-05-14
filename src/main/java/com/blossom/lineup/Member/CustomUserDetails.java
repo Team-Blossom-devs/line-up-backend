@@ -9,6 +9,8 @@ import java.util.Collection;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
+
+    private final Long id;
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
@@ -16,7 +18,8 @@ public class CustomUserDetails implements UserDetails {
     private final String role;
 
     @Builder(builderMethodName = "userDetailsBuilder")
-    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities, String uuid, String role) {
+    public CustomUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities, String uuid, String role) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
