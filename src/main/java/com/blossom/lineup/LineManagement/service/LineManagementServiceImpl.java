@@ -3,11 +3,8 @@ package com.blossom.lineup.LineManagement.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +13,11 @@ import com.blossom.lineup.LineManagement.dto.response.EntranceSuccessResponse;
 import com.blossom.lineup.LineManagement.dto.response.LineListResponse;
 import com.blossom.lineup.LineManagement.dto.response.WaitingDetailsResponse;
 import com.blossom.lineup.LineManagement.util.EntranceTimeLimit;
-import com.blossom.lineup.Organization.entity.Organization;
-import com.blossom.lineup.Organization.repository.OrganizationRepository;
+import com.blossom.lineup.Member.CustomUserDetails;
+import com.blossom.lineup.Member.ManagerRepository;
+import com.blossom.lineup.Member.entity.Manager;
+import com.blossom.lineup.Member.util.Role;
+import com.blossom.lineup.SecurityUtils;
 import com.blossom.lineup.Waiting.entity.Waiting;
 import com.blossom.lineup.Waiting.repository.WaitingRepository;
 import com.blossom.lineup.Waiting.util.EntranceStatus;
@@ -41,10 +41,9 @@ import lombok.extern.slf4j.Slf4j;
 public class LineManagementServiceImpl implements LineManagementService {
 
 	private final WaitingRepository waitingRepository;
+	private final ManagerRepository managerRepository;
 	private final RedisService redisService;
-
-	// TODO: context holder 로 대체
-	private final OrganizationRepository organizationRepository;
+	private final SecurityUtils securityUtils;
 
 	// TODO: 해당 url들 환경변수화
 	// 프론트의 관리자 페이지로 리다이렉션
@@ -55,23 +54,25 @@ public class LineManagementServiceImpl implements LineManagementService {
 
 	@Override
 	public Response<LineListResponse> getWaitingListWithCursor(Long cursor, int size) {
-		// TODO: 권한 검사
-		Organization organization = organizationRepository.findById(1L).stream().findAny()
+
+		CustomUserDetails currentUserInfo = checkCurrentUserRole();
+
+		Manager manager = managerRepository.findWithOrganization(currentUserInfo.getId()).stream()
+			.findAny()
 			.orElseThrow();
 
-		List<Waiting> waitings = waitingRepository.findWaitingByCursor(cursor, organization, size);
+		List<Waiting> waitings = waitingRepository.findWaitingByCursor(cursor, manager.getOrganization(), size);
 
 		int findPageSize = waitings.size();
-		int lastPageElementIndex = findPageSize > size ? size - 2 : findPageSize - 1;
+		int lastPageElementIndex = findPageSize > size ? size - 1 : findPageSize - 1;
 
 		return Response.ok(
 			LineListResponse.builder()
 			.hasNext(findPageSize > size)
-			.cursorTime(waitings.get(lastPageElementIndex).getUpdatedAt())
 			.cursorId(waitings.get(lastPageElementIndex).getId())
 			.waitingDetails(
 				waitings.stream()
-				.limit(lastPageElementIndex + 1)
+				.limit(Math.min(size, findPageSize))
 				.map(WaitingDetailsResponse::fromEntity)
 				.toList()
 			)
@@ -79,9 +80,12 @@ public class LineManagementServiceImpl implements LineManagementService {
 		);
 	}
 
+
+
 	@Override
 	public Response<WaitingDetailsResponse> changeToPending(Long id) throws WriterException, IOException {
-		// TODO: 권한 검사
+
+		checkCurrentUserRole();
 
 		Waiting waiting = waitingRepository.findById(id).stream()
 			.findAny()
@@ -107,7 +111,6 @@ public class LineManagementServiceImpl implements LineManagementService {
 
 	@Override
 	public Response<EntranceSuccessResponse> changeToComplete(EntranceCompleteRequest request) {
-		// TODO: 권한 검사?
 
 		Waiting waiting = waitingRepository.findById(request.getId()).stream()
 			.findAny()
@@ -123,7 +126,8 @@ public class LineManagementServiceImpl implements LineManagementService {
 
 	@Override
 	public Response<WaitingDetailsResponse> revertPendingToWaiting(Long waitingId) {
-		// TODO: 권한 검사
+
+		checkCurrentUserRole();
 
 		Waiting waiting = waitingRepository.findById(waitingId).stream()
 			.findAny()
@@ -135,6 +139,15 @@ public class LineManagementServiceImpl implements LineManagementService {
 		return Response.ok(
 			WaitingDetailsResponse.fromEntity(waiting)
 		);
+	}
+
+	private CustomUserDetails checkCurrentUserRole() {
+		CustomUserDetails currentUserInfo = securityUtils.getCurrentUserInfo();
+
+		if (!currentUserInfo.getRole().equals(Role.MANAGER.getRole())) {
+			throw new BusinessException(Code.ADMIN_UNAUTHORIZED);
+		}
+		return currentUserInfo;
 	}
 
 }

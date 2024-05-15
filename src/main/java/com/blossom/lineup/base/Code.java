@@ -16,6 +16,9 @@ public enum Code {
 	// CST : Customer entity error
 	CUSTOMER_NOT_FOUND(HttpStatus.BAD_REQUEST, "CST-001", "회원을 찾을 수 없습니다."),
 
+	// ADM : Admin error
+	ADMIN_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "ADM-010", "접근 권한이 없습니다."),
+
 	// ORG : Organization entity error
 	ORGANIZATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORG-001", "주점을 찾을 수 없습니다."),
 
