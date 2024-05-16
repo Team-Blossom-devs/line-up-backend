@@ -3,6 +3,7 @@ package com.blossom.lineup.config;
 import com.blossom.lineup.Member.CustomUserDetailsService;
 import com.blossom.lineup.Member.util.Role;
 import com.blossom.lineup.filter.CustomJsonAuthenticationFilter;
+import com.blossom.lineup.filter.ExceptionHandlerFilter;
 import com.blossom.lineup.handler.LoginFailureHandler;
 import com.blossom.lineup.handler.LoginSuccessHandler;
 import com.blossom.lineup.jwt.filter.JwtAuthenticationFilter;
@@ -54,7 +55,8 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // 기본 HTTP 인증 비활성화
                 .addFilterAfter(CustomJsonAuthenticationFilter(), LogoutFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, CustomJsonAuthenticationFilter.class); // JwtAuthenticationFilter 추가
+                .addFilterBefore(jwtAuthenticationFilter, CustomJsonAuthenticationFilter.class) // JwtAuthenticationFilter 추가
+                .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }
@@ -106,6 +108,11 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfiguration);
 
         return source;
+    }
+
+    @Bean
+    public ExceptionHandlerFilter exceptionHandlerFilter() {
+        return new ExceptionHandlerFilter();
     }
 
 }
