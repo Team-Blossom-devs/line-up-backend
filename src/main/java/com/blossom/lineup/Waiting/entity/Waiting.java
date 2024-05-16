@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 @SQLRestriction(value = "active_status <> 'DELETED'")
 @SQLDelete(sql = "UPDATE waiting SET active_status = 'DELETED' WHERE waiting_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table
 public class Waiting extends BaseEntity {
 
 	@Id
