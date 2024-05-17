@@ -3,6 +3,9 @@ package com.blossom.lineup.jwt.core;
 import com.blossom.lineup.Member.CustomUserDetails;
 import com.blossom.lineup.Member.CustomerRepository;
 import com.blossom.lineup.Member.ManagerRepository;
+import com.blossom.lineup.Member.entity.Customer;
+import com.blossom.lineup.Member.entity.Manager;
+import com.blossom.lineup.Member.entity.Member;
 import com.blossom.lineup.Member.util.Role;
 import com.blossom.lineup.base.Code;
 import com.blossom.lineup.base.exceptions.BusinessException;
@@ -15,14 +18,17 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -116,6 +122,37 @@ public class JwtTokenProvider {
         } catch (IllegalArgumentException e) {
             throw new BusinessException(Code.MEMBER_UNAUTHORIZED);
         }
+    }
+
+    public Authentication generateAuthentication(Member member) {
+
+        String username = null;
+        String password = null;
+
+        if (member.getRole().equals(Role.MANAGER)) {
+            Manager manager = (Manager) member;
+
+            username = manager.getManagerName();
+            password = manager.getPassword();
+        }
+
+        if (member.getRole().equals(Role.USER)) {
+            Customer customer = (Customer) member;
+
+            username = customer.getEmail();
+        }
+
+        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + member.getRole().getRole()));
+
+        CustomUserDetails customUserDetails = CustomUserDetails.userDetailsBuilder()
+                .username(username)
+                .password(password)
+                .authorities(authorities)
+                .uuid(member.getUuid())
+                .role(member.getRole().getRole())
+                .build();
+
+        return new UsernamePasswordAuthenticationToken(customUserDetails, "", authorities);
     }
 
     /**
