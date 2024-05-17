@@ -11,6 +11,7 @@ spring:
       - kafka
       - redis
       - jwt
+      - oauth
       - s3
   thymeleaf:
     prefix: classpath:/templates/
