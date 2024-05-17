@@ -33,8 +33,8 @@ public class Customer extends Member{
 	private List<Waiting> waiting = new ArrayList<>();
 
 	@Builder
-	public Customer(String userName, String phoneNumber, String email, String refreshToken, Long socialId) {
-		super(userName, phoneNumber, Role.USER, refreshToken);
+	public Customer(String userName, String phoneNumber, String email, String refreshToken, Role role, Long socialId) {
+		super(userName, phoneNumber, role, refreshToken);
 		this.email = email;
 		this.socialId = socialId;
 	}

@@ -35,7 +35,20 @@ public abstract class Member extends BaseEntity implements BaseMember {
 		this.refreshToken = refreshToken;
 	}
 
+	public void updateUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public void updatePhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+
 	public void updateRefreshToken(String updateRefreshToken) {
 		this.refreshToken = updateRefreshToken;
+	}
+
+	public void updateUpdateRole(Role role) {
+		this.role = role;
 	}
 }
