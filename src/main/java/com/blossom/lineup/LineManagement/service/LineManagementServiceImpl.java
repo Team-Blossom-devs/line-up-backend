@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,11 +46,14 @@ public class LineManagementServiceImpl implements LineManagementService {
 	private final RedisService redisService;
 	private final SecurityUtils securityUtils;
 
-	// TODO: 해당 url들 환경변수화
-	// 프론트의 관리자 페이지로 리다이렉션
-	public static final String redirectUrl = "http://localhost:8080";
-	public static final String qrCodeBaseUrl = "http://localhost:8080/admin/entrance-process/";
-	public static final String redisMemberQrKey = "member:qr:";
+	@Value("${deploy.frontend-url}")
+	private String redirectUrl;
+
+	@Value("${deploy.backend-url}")
+	private String qrCodeBaseUrl;
+
+	@Value("${deploy.qrkey}")
+	private String redisMemberQrKey;
 
 
 	@Override
@@ -96,7 +100,7 @@ public class LineManagementServiceImpl implements LineManagementService {
 		int width = 200;
 		int height = 200;
 
-		String url = qrCodeBaseUrl + id;
+		String url = qrCodeBaseUrl + "/admin/entrance-process/" + id;
 
 		BitMatrix encode = new MultiFormatWriter().encode(url, BarcodeFormat.QR_CODE, width, height);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
