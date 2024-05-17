@@ -27,6 +27,7 @@ public class Organization extends BaseEntity {
 	private Long id;
 	private String name;      	// 주점 이름
 	private String introduce; 	// 주점 소개
+	private String imageUrl;    // 주점 이미지(null 가능)
 	private String location;    // 위치
 	private Integer tableCount; // 테이블 개수
 
