@@ -1,6 +1,5 @@
 package com.blossom.lineup.Waiting.repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.blossom.lineup.Organization.entity.Organization;

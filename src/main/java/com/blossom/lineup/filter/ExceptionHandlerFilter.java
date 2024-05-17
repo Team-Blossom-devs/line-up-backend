@@ -9,7 +9,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.blossom.lineup.base.Code;
 import com.blossom.lineup.base.Response;
 import com.blossom.lineup.base.exceptions.BusinessException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
