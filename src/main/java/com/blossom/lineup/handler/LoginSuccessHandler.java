@@ -12,11 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
+@Transactional
 @RequiredArgsConstructor
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -38,7 +40,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         managerRepository.findByManagerName(userName)
                         .ifPresent(manager -> {
                             manager.updateRefreshToken(refreshToken);
-                            managerRepository.saveAndFlush(manager);
                         });
 
         log.info("로그인에 성공하였습니다. managerName : {}", userName);

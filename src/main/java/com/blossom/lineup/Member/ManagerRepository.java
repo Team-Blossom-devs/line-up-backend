@@ -11,9 +11,11 @@ import java.util.Optional;
 
 public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
-    Optional<Manager> findByManagerName(String managerName);
+    @Query("SELECT m FROM Manager m JOIN FETCH m.organization o WHERE m.managerName = :managerName")
+    Optional<Manager> findByManagerName(@Param("managerName") String managerName);
 
-    Optional<Manager> findByUuid(String Uuid);
+    @Query("SELECT m FROM Manager m JOIN FETCH m.organization o WHERE m.uuid = :uuid")
+    Optional<Manager> findByUuid(@Param("uuid") String uuid);
 
     @EntityGraph(attributePaths = {"organization"})
     @Query("select m from Manager m where m.id=:id")

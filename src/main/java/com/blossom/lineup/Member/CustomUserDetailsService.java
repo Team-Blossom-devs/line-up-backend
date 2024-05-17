@@ -31,11 +31,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         Pattern pattern = Pattern.compile(emailRegex);
 
         if (pattern.matcher(username).matches()) {
-            log.info("loadCustomerByEmail, managerName - {}", username);
+            log.info("loadCustomerByEmail, customer email - {}", username);
             return loadCustomerByEmail(username);
         }
 
-        log.info("loadManagerByName, email - {}", username);
+        log.info("loadManagerByName, managerName - {}", username);
         return loadManagerByName(username);
     }
 
