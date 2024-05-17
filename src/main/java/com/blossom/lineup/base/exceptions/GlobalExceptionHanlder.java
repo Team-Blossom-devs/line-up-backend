@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 @Slf4j
 @RestControllerAdvice
@@ -29,6 +30,12 @@ public class GlobalExceptionHanlder {
     public Response<?> handleValidateException(MethodArgumentNotValidException e) {
         log.error("validate fail = {}, error field = {}", e.getMessage(), e.getBindingResult());
         return Response.fail(Code.VALIDATION_FAIL.getCode(),Code.VALIDATION_FAIL.getMessage());
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    public Response<?> handleMultipartException(MultipartException e){
+        log.error("Multipart Exception = {}", e.getMessage());
+        return Response.fail(Code.MULTIPART_REQUEST_FAIL.getCode(), Code.MULTIPART_REQUEST_FAIL.getMessage());
     }
 
     @ExceptionHandler(BusinessException.class)

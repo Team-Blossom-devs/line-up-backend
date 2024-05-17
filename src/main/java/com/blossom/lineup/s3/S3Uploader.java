@@ -33,6 +33,11 @@ public class S3Uploader {
     private String maxFileSize;
 
     public String saveFile(MultipartFile file, String folderName){
+        // 파일이 비어있으면 error
+        if(file.isEmpty()){
+            throw new BusinessException(Code.IMAGE_IS_NULL);
+        }
+
         // ex - organization/uuid.png
         String randomFilePath = generateUniqueFilename(file,folderName);
 

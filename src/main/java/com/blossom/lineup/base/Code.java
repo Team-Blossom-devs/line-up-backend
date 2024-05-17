@@ -11,8 +11,12 @@ public enum Code {
 	OK(HttpStatus.OK, "COM-000", "ok"),
 	JSON_TYPE_FAIL(HttpStatus.BAD_REQUEST, "COM-400", "JSON 타입이 맞지 않습니다."),
 	VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "COM-400", "입력 형식이 올바르지 않습니다."),
-	NOT_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "COM-400", "허용되지 않은 확장자입니다. (jpg, png, gif, jpeg만 가능)"),
 	SERVER_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "COM-500", "서버 내의 문제가 발생했습니다."),
+
+	// IMG : Image upload error
+	IMAGE_IS_NULL(HttpStatus.BAD_REQUEST, "IMG-001", "이미지가 비어있습니다."),
+	MULTIPART_REQUEST_FAIL(HttpStatus.BAD_REQUEST, "IMG-002", "이 요청은 Multipart 요청이 아닙니다."),
+	NOT_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "IMG-003", "허용되지 않은 확장자입니다. (jpg, png, gif, jpeg만 가능)"),
 	S3_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "COM-500", "S3 파일업로드에 실패했습니다."),
 
 	// CST : Customer entity error
