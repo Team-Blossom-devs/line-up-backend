@@ -1,0 +1,4 @@
+deploy:
+  frontend-url: ${FE_URL} # 프론트 배포 주소
+  backend-url: ${BE_URL} # 백엔드 배포 주소
+  qrkey: ${QR_KEY} # member:qr:
