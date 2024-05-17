@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
- * "/api/manager/sign-in" 요청 왔을 때 JSON 값을 매핑 처리하는 필터
+ * "/api/sign-in/manager" 요청 왔을 때 JSON 값을 매핑 처리하는 필터
  */
 public class CustomJsonAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 

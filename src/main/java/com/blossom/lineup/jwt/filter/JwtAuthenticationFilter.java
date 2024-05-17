@@ -1,6 +1,5 @@
 package com.blossom.lineup.jwt.filter;
 
-import com.blossom.lineup.Member.CustomUserDetails;
 import com.blossom.lineup.Member.CustomerRepository;
 import com.blossom.lineup.Member.ManagerRepository;
 import com.blossom.lineup.Member.entity.Customer;
@@ -18,9 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -44,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final List<String> filterPassUrl = List.of("/", "/api/sign-in/manager");
+    private static final List<String> filterPassUrl = List.of("/", "/favicon.ico", "/api/sign-in/manager","/login/oauth2/code/kakao", "/oauth2/authorization/kakao");
 
     private final JwtTokenProvider jwtTokenProvider;
     private final ManagerRepository managerRepository;
@@ -60,6 +57,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        log.info(request.getRequestURI());
+
         // Request Header 에서 AccessToken 추출
         String accessToken = jwtTokenProvider.extractAccessToken(request)
                 .orElseThrow(() -> new BusinessException(Code.MEMBER_LOGIN_REQUIRED));
@@ -72,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         Member member = checkMember(claims);
 
-        Authentication authentication = generateAuthentication(member);
+        Authentication authentication = jwtTokenProvider.generateAuthentication(member);
 
         // AccessToken 만료 검사
         if (jwtTokenProvider.isExpired(accessToken)) {
@@ -89,24 +88,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // DB에 저장된 RefreshToken 과 일치하는지 검사 후 RefreshToken 재발급
             if (Role.MANAGER.getRole().equals(role)) {
-                Manager manager = managerRepository.findByUuid(uuid)
-                        .orElseThrow(() -> new BusinessException(Code.MANAGER_NOT_FOUND));
+
+                Manager manager = (Manager) member;
 
                 if (manager.getRefreshToken().equals(refreshToken)) {
                     refreshToken = jwtTokenProvider.generateRefreshToken();
                     manager.updateRefreshToken(refreshToken);
-                    managerRepository.saveAndFlush(manager);
                 } else throw new BusinessException(Code.MEMBER_UNAUTHORIZED);
             }
 
             if (Role.USER.getRole().equals(role)) {
-                Customer customer = customerRepository.findByUuid(uuid)
-                        .orElseThrow(() -> new BusinessException(Code.CUSTOMER_NOT_FOUND));
+
+                Customer customer = (Customer) member;
 
                 if (customer.getRefreshToken().equals(refreshToken)) {
                     refreshToken = jwtTokenProvider.generateRefreshToken();
                     customer.updateRefreshToken(refreshToken);
-                    customerRepository.saveAndFlush(customer);
                 } else throw new BusinessException(Code.MEMBER_UNAUTHORIZED);
             }
 
@@ -126,7 +123,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String role = claims.get("role", String.class);
         String uuid = claims.get("uuid", String.class);
 
-        if (role.equals(Role.USER.getRole())) {
+        if (role.equals(Role.USER.getRole()) || role.equals(Role.GUEST.getRole())) {
              return customerRepository.findByUuid(uuid).orElseThrow(() -> new BusinessException(Code.CUSTOMER_NOT_FOUND));
         }
         if (role.equals(Role.MANAGER.getRole())) {
@@ -134,37 +131,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         throw new BusinessException(Code.MEMBER_UNAUTHORIZED);
-    }
-
-    private Authentication generateAuthentication(Member member) {
-
-        String username = null;
-        String password = null;
-
-        if (member.getRole().equals(Role.MANAGER)) {
-            Manager manager = (Manager) member;
-
-            username = manager.getManagerName();
-            password = manager.getPassword();
-        }
-
-        if (member.getRole().equals(Role.USER)) {
-            Customer customer = (Customer) member;
-
-            username = customer.getEmail();
-        }
-
-        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + member.getRole().getRole()));
-
-        CustomUserDetails customUserDetails = CustomUserDetails.userDetailsBuilder()
-                .id(member.getId())
-                .username(username)
-                .password(password)
-                .authorities(authorities)
-                .uuid(member.getUuid())
-                .role(member.getRole().getRole())
-                .build();
-
-        return new UsernamePasswordAuthenticationToken(customUserDetails, "", authorities);
     }
 }
