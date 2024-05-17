@@ -12,6 +12,7 @@ import lombok.Getter;
 public class OrganizationDto {
     private String name;
     private String introduce;
+    private String imageUrl;
     private String location;
     private Integer tableCount;
 
@@ -19,6 +20,7 @@ public class OrganizationDto {
         return new OrganizationDto(
                 o.getName(),
                 o.getIntroduce(),
+                o.getImageUrl(),
                 o.getLocation(),
                 o.getTableCount()
         );
