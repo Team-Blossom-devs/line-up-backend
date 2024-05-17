@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  main:
+    build:
+      context: ./docker-files
+      dockerfile: main-server
+    image: ${REGISTRY}/${REPOSITORY}:${TAG1}
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      KAKAO_ID: ${KAKAO_ID}
+      KAKAO_SECRET: ${KAKAO_SECRET}
+      BUCKET_NAME: ${BUCKET_NAME}
+      FE_URL: ${FE_URL}
+      BE_URL: ${BE_URL}
+      QR_KEY: ${QR_KEY}
+
+  redis:
+    build:
+      context: ./docker-files
+      dockerfile: redis
+    image: ${REGISTRY}/${REPOSITORY}:${TAG2}
+    ports:
+      - "6379:6379"
