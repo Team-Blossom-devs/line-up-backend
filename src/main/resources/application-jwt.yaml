@@ -1,9 +1,9 @@
 jwt:
-  secret: TMKMhLAYiR7ipWkTFw7bJujt8uFzuh83b21gx9Dteljut8
-  access-expiration: 3600000 #1시간
+  secret: ${JWT_SECRET}
+  access-expiration: 1800000 #30분
   access-header: Authorization
 
-  refresh-expiration: 1209600000 #2주일
+  refresh-expiration: 604800000 #1주일
   refresh-setCookie: refreshToken
 
   cookie-expiration: 604800000  #1주일
