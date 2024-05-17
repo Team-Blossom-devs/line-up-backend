@@ -47,7 +47,7 @@ public class LineManagementServiceImpl implements LineManagementService {
 	private final SecurityUtils securityUtils;
 
 	@Value("${deploy.frontend-url}")
-	private String redirectUrl;
+	private String frontUrl;
 
 	@Value("${deploy.backend-url}")
 	private String qrCodeBaseUrl;
@@ -125,7 +125,7 @@ public class LineManagementServiceImpl implements LineManagementService {
 
 		redisService.deleteData(redisMemberQrKey + request.getId());
 
-		return Response.ok(new EntranceSuccessResponse(redirectUrl));
+		return Response.ok(new EntranceSuccessResponse(frontUrl + "/admin"));
 	}
 
 	@Override
