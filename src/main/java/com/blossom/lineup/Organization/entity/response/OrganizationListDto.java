@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 주점 검색 페이지에서 보여주는 간략한 주점 dto
+ */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrganizationListDto {

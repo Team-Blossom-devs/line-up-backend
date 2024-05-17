@@ -4,6 +4,9 @@ import com.blossom.lineup.Organization.entity.Organization;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 주점 상세 정보 dto
+ */
 @Getter
 @AllArgsConstructor
 public class OrganizationDto {
