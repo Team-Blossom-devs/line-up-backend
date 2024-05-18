@@ -5,7 +5,7 @@ services:
     build:
       context: ./docker-files
       dockerfile: main-server
-    image: ${USERNAME}/${REPOSITORY}:main
+    image: main:latest
     ports:
       - "8080:8080"
     environment:
@@ -29,7 +29,7 @@ services:
     build:
       context: ./docker-files
       dockerfile: redis
-    image: ${USERNAME}/${REPOSITORY}:redis
+    image: redis:latest
     ports:
       - "6379:6379"
 
@@ -37,6 +37,6 @@ services:
     build:
       context: ./docker-files
       dockerfile: nginx
-    image: ${USERNAME}/${REPOSITORY}:nginx
+    image: nginx:latest
     ports:
       - "80:80"

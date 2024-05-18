@@ -41,10 +41,13 @@ jobs:
           BE_URL: ${{ secrets.BE_URL }}
           QR_KEY: ${{ secrets.QR_KEY }}
         run: |
-          export USERNAME=$USERNAME
-          export REPOSITORY=$REPOSITORY
           docker-compose build
-          docker-compose push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
+          docker tag main:latest ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:main
+          docker tag redis:latest ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:redis
+          docker tag nginx:latest ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:nginx
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:main
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:redis
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:nginx
 
       - name: Deploy
         uses: appleboy/ssh-action@master
