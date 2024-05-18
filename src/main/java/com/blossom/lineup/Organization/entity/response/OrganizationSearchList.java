@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 주점 검색 리스트 dto
+ */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrganizationSearchList {
