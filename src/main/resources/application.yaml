@@ -13,6 +13,7 @@ spring:
       - jwt
       - oauth
       - s3
+      - -env
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
