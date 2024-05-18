@@ -31,7 +31,7 @@ jobs:
         AWS_S3_BUCKET_ACCESS_KEY: ${{ secrets.AWS_S3_BUCKET_ACCESS_KEY }}
         AWS_S3_BUCKET_SECRET_KEY: ${{ secrets.AWS_S3_BUCKET_SECRET_KEY }}
         REDIS_HOST: test
-        REDIS_PORT: test
+        REDIS_PORT: 1234
         FE_URL: test
         BE_URL: test
         QR_KEY: test
