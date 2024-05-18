@@ -30,6 +30,11 @@ jobs:
         AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
         AWS_S3_BUCKET_ACCESS_KEY: ${{ secrets.AWS_S3_BUCKET_ACCESS_KEY }}
         AWS_S3_BUCKET_SECRET_KEY: ${{ secrets.AWS_S3_BUCKET_SECRET_KEY }}
+        REDIS_HOST: test
+        REDIS_PORT: test
+        FE_URL: test
+        BE_URL: test
+        QR_KEY: test
       run: ./gradlew build
       
   # 배포 이후 deploy job 추가
