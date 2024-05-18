@@ -12,7 +12,12 @@ spring:
       - redis
       - jwt
       - oauth
+      - s3
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
-
+  servlet:
+    multipart:
+      resolve-lazily: true
+      max-file-size: 5MB     # 파일의 용량 제한
+      max-request-size: 10MB # 전체 최대 크기 용량 제한
