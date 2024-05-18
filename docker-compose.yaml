@@ -3,33 +3,17 @@ version: "3.8"
 services:
   main:
     build:
-      context: ./docker-files
-      dockerfile: main-server
-    image: main:latest
+      context: .
+      dockerfile: Dockerfile
+    image: blossomdevs/line-up-server:main
     ports:
       - "8080:8080"
-    environment:
-      DB_URL: ${DB_URL}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      JWT_SECRET: ${JWT_SECRET}
-      KAKAO_ID: ${KAKAO_ID}
-      KAKAO_SECRET: ${KAKAO_SECRET}
-      REDIRECT_URI: ${REDIRECT_URI}
-      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-      AWS_S3_BUCKET_ACCESS_KEY: ${AWS_S3_BUCKET_ACCESS_KEY}
-      AWS_S3_BUCKET_SECRET_KEY: ${AWS_S3_BUCKET_SECRET_KEY}
-      FE_URL: ${FE_URL}
-      BE_URL: ${BE_URL}
-      QR_KEY: ${QR_KEY}
 
   redis:
     build:
       context: ./docker-files
       dockerfile: redis
-    image: redis:latest
+    image: blossomdevs/line-up-server:redis
     ports:
       - "6379:6379"
 
@@ -37,6 +21,6 @@ services:
     build:
       context: ./docker-files
       dockerfile: nginx
-    image: nginx:latest
+    image: blossomdevs/line-up-server:nginx
     ports:
       - "80:80"
