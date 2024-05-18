@@ -1,0 +1,16 @@
+# 1. 빌드를 위한 베이스 이미지
+FROM gradle:8.5-jdk17 AS build
+
+LABEL authors="keon"
+
+COPY --chown=gradle:gradle . /home/gradle/src
+
+WORKDIR /home/gradle/src
+
+RUN gradle build --no-daemon --warning-mode=all --scan -x test
+
+FROM openjdk:17
+
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
+
+ENTRYPOINT ["java", "-jar", "/app/spring-boot-application.jar"]

@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtResponseConfigurer jwtResponseConfigurer;
+    @Value("${deploy.frontend-url}")
+    private String frontUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -44,7 +48,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 String accessToken = jwtTokenProvider.generateAccessToken(generatedAuthentication);
 
                 jwtResponseConfigurer.configureTokenResponse(response, accessToken, null);
-                String redirectUrl = "http://localhost:8080" + "/api/oauth/sign-up" + "?token=" + accessToken;
+                String redirectUrl = frontUrl + "?token=" + accessToken;
                 response.sendRedirect(redirectUrl);
 
             } else {
