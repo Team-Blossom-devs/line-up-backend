@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +31,8 @@ public class Organization extends BaseEntity {
 	private String imageUrl;    // 주점 이미지(null 가능)
 	private String location;    // 위치
 	private Integer tableCount; // 테이블 개수
+	private LocalTime openTime;   // 영업 오픈 시간
+	private LocalTime closeTime;  // 영업 마감 시간
 
 	@NotNull
 	private Integer tableTimeLimit; // 테이블 이용 제한 시간(분)
