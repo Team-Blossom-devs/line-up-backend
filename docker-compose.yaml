@@ -5,7 +5,7 @@ services:
     build:
       context: ./docker-files
       dockerfile: main-server
-    image: ${REGISTRY}/${REPOSITORY}:${TAG1}
+    image: ${USERNAME}/${REPOSITORY}:main
     ports:
       - "8080:8080"
     environment:
@@ -17,7 +17,10 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       KAKAO_ID: ${KAKAO_ID}
       KAKAO_SECRET: ${KAKAO_SECRET}
-      BUCKET_NAME: ${BUCKET_NAME}
+      REDIRECT_URI: ${REDIRECT_URI}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      AWS_S3_BUCKET_ACCESS_KEY: ${AWS_S3_BUCKET_ACCESS_KEY}
+      AWS_S3_BUCKET_SECRET_KEY: ${AWS_S3_BUCKET_SECRET_KEY}
       FE_URL: ${FE_URL}
       BE_URL: ${BE_URL}
       QR_KEY: ${QR_KEY}
@@ -26,6 +29,14 @@ services:
     build:
       context: ./docker-files
       dockerfile: redis
-    image: ${REGISTRY}/${REPOSITORY}:${TAG2}
+    image: ${USERNAME}/${REPOSITORY}:redis
     ports:
       - "6379:6379"
+
+  nginx:
+    build:
+      context: ./docker-files
+      dockerfile: nginx
+    image: ${USERNAME}/${REPOSITORY}:nginx
+    ports:
+      - "80:80"
