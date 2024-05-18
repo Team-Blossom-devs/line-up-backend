@@ -1,10 +1,10 @@
 cloud:
   aws:
     s3:
-      bucket-name: ${aws.s3.bucket.name}
+      bucket-name: ${AWS_S3_BUCKET_NAME}
     credentials:
-      accessKey: ${aws.s3.bucket.accessKey}
-      secretKey: ${aws.s3.bucket.secretKey}
+      accessKey: ${AWS_S3_BUCKET_ACCESS_KEY}
+      secretKey: ${AWS_S3_BUCKET_SECRET_KEY}
     region:
       static: ap-northeast-2
     # stack.auto를 false로 지정하지 않으면 StackTrace가 발생한다.
