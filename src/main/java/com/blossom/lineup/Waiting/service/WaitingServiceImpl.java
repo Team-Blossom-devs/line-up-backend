@@ -1,9 +1,11 @@
 package com.blossom.lineup.Waiting.service;
 
+import com.blossom.lineup.Member.CustomUserDetails;
 import com.blossom.lineup.Member.CustomerRepository;
 import com.blossom.lineup.Member.entity.Customer;
 import com.blossom.lineup.Organization.entity.Organization;
 import com.blossom.lineup.Organization.repository.OrganizationRepository;
+import com.blossom.lineup.SecurityUtils;
 import com.blossom.lineup.Waiting.entity.Waiting;
 import com.blossom.lineup.Waiting.entity.request.WaitingRequest;
 import com.blossom.lineup.Waiting.entity.response.PendingResponse;
@@ -13,8 +15,11 @@ import com.blossom.lineup.Waiting.util.EntranceStatus;
 import com.blossom.lineup.base.Code;
 import com.blossom.lineup.base.Response;
 import com.blossom.lineup.base.exceptions.BusinessException;
+import com.blossom.lineup.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +38,12 @@ public class WaitingServiceImpl implements WaitingService{
     private final WaitingRepository waitingRepository;
     private final CustomerRepository customerRepository;
     private final OrganizationRepository organizationRepository;
+
+    private final SecurityUtils securityUtils;
+    private final RedisService redisService;
+
+    // todo: 환경변수화
+    public static final String redisMemberQrKey = "member:qr:";
 
     // TODO : Context Holder 구현 후, 권한 검사 추가 (ex- 내 대기번호가 아닌데 조회하는 경우)
     private Waiting findWaiting(Long waitingId){
@@ -110,8 +121,34 @@ public class WaitingServiceImpl implements WaitingService{
         }
     }
 
+    @Override
+    public Resource getQrCodeAsMultipartFile(Long waitingId) {
+        Waiting waiting = findWaiting(waitingId);
+
+        // waiting이 "PENDING" 상태인지 확인
+        if(waiting.getEntranceStatus()!=EntranceStatus.PENDING){
+            throw new BusinessException(Code.WAITING_IS_NOT_PENDING);
+        }
+
+        // 요청하는 사용자 정보 일치 확인.
+        CustomUserDetails currentUserInfo = securityUtils.getCurrentUserInfo();
+        log.info("qr-code 요청 유저 {} : waiting 유저 {}", currentUserInfo.getId(),waiting.getCustomer().getId());
+
+        if(waiting.getCustomer().getId() != currentUserInfo.getId()){
+            throw new BusinessException(Code.WAITING_NOT_MATCH_USER);
+        }
+
+        // redis에서 qr코드를 가져오고, 없다면 에러처리.
+        byte[] qrCodeData = redisService.getByteData(redisMemberQrKey + waitingId)
+                .orElseThrow(()-> new BusinessException(Code.QRCODE_IS_NULL));
+
+        // 바이트 데이터를 ByteArrayResource로 변환
+        return new ByteArrayResource(qrCodeData);
+    }
+
     /**
      * 대기 현황 조회
+     * (WAITING 상태일 때)
      * @param waiting
      * @param organizationId
      * @return
@@ -170,6 +207,7 @@ public class WaitingServiceImpl implements WaitingService{
 
     /**
      * 입장중 상태 조회
+     * (PENDING)
      * @param waiting
      * @return
      */
