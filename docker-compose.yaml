@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: blossomdevs/line-up-server:main
+    image: main:latest
     ports:
       - "8080:8080"
 
@@ -13,7 +13,7 @@ services:
     build:
       context: ./docker-files
       dockerfile: redis
-    image: blossomdevs/line-up-server:redis
+    image: redis:latest
     ports:
       - "6379:6379"
 
@@ -21,6 +21,6 @@ services:
     build:
       context: ./docker-files
       dockerfile: nginx
-    image: blossomdevs/line-up-server:nginx
+    image: nginx:latest
     ports:
       - "80:80"
