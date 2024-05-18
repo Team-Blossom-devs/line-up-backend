@@ -26,6 +26,10 @@ jobs:
       run: chmod +x gradlew
 
     - name: 스프링부트 애플리케이션 빌드
+      env:
+        AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+        AWS_S3_BUCKET_ACCESS_KEY: ${{ secrets.AWS_S3_BUCKET_ACCESS_KEY }}
+        AWS_S3_BUCKET_SECRET_KEY: ${{ secrets.AWS_S3_BUCKET_SECRET_KEY }}
       run: ./gradlew build
       
   # 배포 이후 deploy job 추가
