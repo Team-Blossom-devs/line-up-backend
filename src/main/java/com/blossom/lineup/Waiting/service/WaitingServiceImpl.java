@@ -18,6 +18,7 @@ import com.blossom.lineup.base.exceptions.BusinessException;
 import com.blossom.lineup.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -42,8 +43,9 @@ public class WaitingServiceImpl implements WaitingService{
     private final SecurityUtils securityUtils;
     private final RedisService redisService;
 
-    // todo: 환경변수화
-    public static final String redisMemberQrKey = "member:qr:";
+    @Value("${deploy.qrkey}")
+    private String redisMemberQrKey;
+
 
     // TODO : Context Holder 구현 후, 권한 검사 추가 (ex- 내 대기번호가 아닌데 조회하는 경우)
     private Waiting findWaiting(Long waitingId){
