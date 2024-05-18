@@ -41,6 +41,8 @@ jobs:
           BE_URL: ${{ secrets.BE_URL }}
           QR_KEY: ${{ secrets.QR_KEY }}
         run: |
+          export USERNAME=$USERNAME
+          export REPOSITORY=$REPOSITORY
           docker-compose build
           docker-compose push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
 
