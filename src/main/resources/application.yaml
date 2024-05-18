@@ -8,7 +8,6 @@ spring:
       prod:
         - prod
     include:
-      - kafka
       - redis
       - jwt
       - oauth
