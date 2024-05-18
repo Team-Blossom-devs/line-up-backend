@@ -8,12 +8,11 @@ spring:
       prod:
         - prod
     include:
-      - kafka
       - redis
       - jwt
       - oauth
       - s3
-      - -env
+      - env
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
