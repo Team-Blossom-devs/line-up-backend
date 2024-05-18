@@ -27,14 +27,21 @@ jobs:
 
     - name: 스프링부트 애플리케이션 빌드
       env:
+        DB_URL: ${{ secrets.DB_URL }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        REDIS_HOST: ${{ secrets.REDIS_HOST }}
+        REDIS_PORT: ${{ secrets.REDIS_PORT }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        KAKAO_ID: ${{ secrets.KAKAO_ID }}
+        KAKAO_SECRET: ${{ secrets.KAKAO_SECRET }}
+        REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
         AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
         AWS_S3_BUCKET_ACCESS_KEY: ${{ secrets.AWS_S3_BUCKET_ACCESS_KEY }}
         AWS_S3_BUCKET_SECRET_KEY: ${{ secrets.AWS_S3_BUCKET_SECRET_KEY }}
-        REDIS_HOST: test
-        REDIS_PORT: 1234
-        FE_URL: test
-        BE_URL: test
-        QR_KEY: test
+        FE_URL: ${{ secrets.FE_URL }}
+        BE_URL: ${{ secrets.BE_URL }}
+        QR_KEY: ${{ secrets.QR_KEY }}
       run: ./gradlew build
       
   # 배포 이후 deploy job 추가
