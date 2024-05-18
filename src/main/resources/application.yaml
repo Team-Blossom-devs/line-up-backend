@@ -12,7 +12,6 @@ spring:
       - redis
       - jwt
       - oauth
-      - env
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
