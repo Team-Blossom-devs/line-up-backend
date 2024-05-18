@@ -51,9 +51,9 @@ public class WaitingServiceImpl implements WaitingService{
                 .orElseThrow(()->new BusinessException(Code.WAITING_NOT_FOUND));
     }
 
-    // todo : jwt로 구현한 후에 회원 정보 가져오는 부분 변경
     private Customer findCustomer(){
-        return customerRepository.findById(1L)
+        CustomUserDetails currentUserInfo = securityUtils.getCurrentUserInfo();
+        return customerRepository.findById(currentUserInfo.getId())
                 .orElseThrow(()-> new BusinessException(Code.CUSTOMER_NOT_FOUND));
     }
 
@@ -131,10 +131,10 @@ public class WaitingServiceImpl implements WaitingService{
         }
 
         // 요청하는 사용자 정보 일치 확인.
-        CustomUserDetails currentUserInfo = securityUtils.getCurrentUserInfo();
-        log.info("qr-code 요청 유저 {} : waiting 유저 {}", currentUserInfo.getId(),waiting.getCustomer().getId());
+        Customer customer = findCustomer();
+        log.info("qr-code 요청 유저 {} : waiting 유저 {}", customer.getId(),waiting.getCustomer().getId());
 
-        if(waiting.getCustomer().getId() != currentUserInfo.getId()){
+        if(waiting.getCustomer().getId() != customer.getId()){
             throw new BusinessException(Code.WAITING_NOT_MATCH_USER);
         }
 
