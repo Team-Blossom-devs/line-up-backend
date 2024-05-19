@@ -65,8 +65,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = jwtTokenProvider.generateAccessToken(generatedAuthentication);
         String refreshToken = jwtTokenProvider.generateRefreshToken();
 
+        jwtTokenProvider.updateRefreshToken(customer.getUuid(), refreshToken, customer.getRole().getRole());
+
         jwtResponseConfigurer.configureTokenResponse(response, accessToken, refreshToken);
 
-        jwtTokenProvider.updateRefreshToken(customer.getUuid(), refreshToken, customer.getRole().getRole());
+        String redirectUrl = frontUrl + "/viewAll" + "?token=" + accessToken;
+        response.sendRedirect(redirectUrl);
     }
 }
