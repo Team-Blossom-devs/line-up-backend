@@ -107,8 +107,8 @@ public class SecurityConfig {
         corsConfiguration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
                 "http://localhost:5672",
-                "http://localhost:15672",
-                "http://localhost:61613",
+                "http://localhost:5174",
+                "http://http://3.38.250.226",
                 "http://localhost:8080"
         ));
         corsConfiguration.setAllowCredentials(true);
