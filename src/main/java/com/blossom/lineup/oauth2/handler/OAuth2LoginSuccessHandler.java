@@ -48,7 +48,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 String accessToken = jwtTokenProvider.generateAccessToken(generatedAuthentication);
 
                 jwtResponseConfigurer.configureTokenResponse(response, accessToken, null);
-                String redirectUrl = frontUrl + "/oauth" + "?token=" + accessToken;
+                String redirectUrl = frontUrl + "/signup" + "?token=" + accessToken;
                 response.sendRedirect(redirectUrl);
 
             } else {
