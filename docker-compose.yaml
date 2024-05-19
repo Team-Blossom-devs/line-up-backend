@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: main:latest
+    image: main
     ports:
       - "8080:8080"
     environment:
@@ -29,7 +29,7 @@ services:
     build:
       context: ./docker-files
       dockerfile: redis
-    image: redis:latest
+    image: redis
     ports:
       - "6379:6379"
 
@@ -37,6 +37,6 @@ services:
     build:
       context: ./docker-files
       dockerfile: nginx
-    image: nginx:latest
+    image: nginx
     ports:
       - "80:80"
