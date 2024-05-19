@@ -1,6 +1,6 @@
 package com.blossom.lineup.Member;
 
-import com.blossom.lineup.Member.entity.dto.SignUpRequest;
+import com.blossom.lineup.Member.entity.dto.CustomerSignUpRequest;
 import com.blossom.lineup.base.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping("/oauth/sign-up")
-    public Response<Void> oauthSignUp(@Validated @RequestBody SignUpRequest signUpRequest) {
+    public Response<Void> oauthSignUp(@Validated @RequestBody CustomerSignUpRequest signUpRequest) {
 
         customerService.oauthSignUp(signUpRequest);
         return Response.ok();

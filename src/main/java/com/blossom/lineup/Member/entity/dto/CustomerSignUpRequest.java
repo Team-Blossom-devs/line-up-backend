@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignUpRequest {
+public class CustomerSignUpRequest {
 
     @NotNull
     private String userName;

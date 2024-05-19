@@ -108,7 +108,7 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://localhost:5672",
                 "http://localhost:5174",
-                "http://http://3.38.250.226",
+                "http://3.38.250.226",
                 "http://localhost:8080"
         ));
         corsConfiguration.setAllowCredentials(true);
