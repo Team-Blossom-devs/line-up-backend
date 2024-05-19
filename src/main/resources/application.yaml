@@ -7,6 +7,8 @@ spring:
         - local
       prod:
         - prod
+      ci:
+        - ci
     include:
       - redis
       - jwt
