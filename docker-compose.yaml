@@ -2,9 +2,6 @@ version: "3.8"
 
 services:
   main:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: main:latest
     ports:
       - "8080:8080"
@@ -26,17 +23,11 @@ services:
       QR_KEY: ${QR_KEY}
 
   redis:
-    build:
-      context: ./docker-files
-      dockerfile: redis
     image: redis:latest
     ports:
       - "6379:6379"
 
   nginx:
-    build:
-      context: ./docker-files
-      dockerfile: nginx:latest
-    image: nginx
+    image: nginx:latest
     ports:
       - "80:80"
