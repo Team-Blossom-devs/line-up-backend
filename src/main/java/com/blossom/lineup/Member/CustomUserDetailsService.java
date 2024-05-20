@@ -45,6 +45,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + customer.getRole().getRole()));
         return CustomUserDetails.userDetailsBuilder()
+                .id(customer.getId())
                 .username(customer.getEmail())
                 .password(null)
                 .authorities(authorities)
@@ -59,6 +60,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + manager.getRole().getRole()));
         return CustomUserDetails.userDetailsBuilder()
+                .id(manager.getId())
                 .username(manager.getManagerName())
                 .password(manager.getPassword())
                 .authorities(authorities)
