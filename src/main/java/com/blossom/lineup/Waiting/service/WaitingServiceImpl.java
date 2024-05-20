@@ -90,12 +90,12 @@ public class WaitingServiceImpl implements WaitingService{
 
     @Override
     public void delete(Long waitingId) {
-        log.debug(waitingId+" 대기를 삭제했습니다.");
-
         Waiting w = findWaiting(waitingId);
-
         Customer customer = findCustomer();
-        if(w.getCustomer().getId().equals(customer.getId())){ // 지우기 전 권한 검사.
+
+        log.info("[Waiting Delete] wCustomer : {} - SecurityCustomer : {}", w.getCustomer().getId(), customer.getId());
+
+        if(!w.getCustomer().getId().equals(customer.getId())){ // 지우기 전 권한 검사.
             throw new BusinessException(Code.WAITING_NOT_MATCH_USER);
         }
 
@@ -146,7 +146,7 @@ public class WaitingServiceImpl implements WaitingService{
         Customer customer = findCustomer();
         log.info("qr-code 요청 유저 {} : waiting 유저 {}", customer.getId(),waiting.getCustomer().getId());
 
-        if(waiting.getCustomer().getId().equals(customer.getId())){
+        if(!waiting.getCustomer().getId().equals(customer.getId())){
             throw new BusinessException(Code.WAITING_NOT_MATCH_USER);
         }
 
@@ -167,11 +167,13 @@ public class WaitingServiceImpl implements WaitingService{
         Organization o = findOrganization(organizationId);
         int beforeMeCnt = 0; // 대기가 하나도 없으면 내 앞에 대기 0팀.
         String waitingStatus = "NOT-WAITING";
+        Long waitingId = null;
         Integer headCount = null;
 
         // waiting이 있으면 내 대기번호 반환
         if(waiting != null){
             log.debug("대기 현황 조회 : "+waiting.getId());
+            waitingId = waiting.getId();
             headCount = waiting.getHeadCount();
             List<Waiting> beforeMe = waitingRepository.findBeforeMyWaiting(o, waiting.getId()); // 나 이전의 대기 명단
             beforeMeCnt = beforeMe.size();
@@ -211,7 +213,7 @@ public class WaitingServiceImpl implements WaitingService{
 
         int expactWaitingTime = quotient * o.getTableTimeLimit() + remainTableTimes.get(remainder);
 
-        return new WaitingResponse(waitingStatus, beforeMeCnt, expactWaitingTime, headCount);
+        return new WaitingResponse(waitingStatus, waitingId, beforeMeCnt, expactWaitingTime, headCount);
     }
 
     /**
