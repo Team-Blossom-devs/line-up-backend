@@ -128,29 +128,35 @@ public class JwtTokenProvider {
 
         String username = null;
         String password = null;
+        Long id = null;
 
         if (member.getRole().equals(Role.MANAGER)) {
             Manager manager = (Manager) member;
 
             username = manager.getManagerName();
             password = manager.getPassword();
+            id = manager.getId();
+
         }
 
         if (member.getRole().equals(Role.USER)) {
             Customer customer = (Customer) member;
 
             username = customer.getEmail();
+            id = customer.getId();
+
         }
 
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + member.getRole().getRole()));
 
         CustomUserDetails customUserDetails = CustomUserDetails.userDetailsBuilder()
-                .username(username)
-                .password(password)
-                .authorities(authorities)
-                .uuid(member.getUuid())
-                .role(member.getRole().getRole())
-                .build();
+            .id(id)
+            .username(username)
+            .password(password)
+            .authorities(authorities)
+            .uuid(member.getUuid())
+            .role(member.getRole().getRole())
+            .build();
 
         return new UsernamePasswordAuthenticationToken(customUserDetails, "", authorities);
     }
