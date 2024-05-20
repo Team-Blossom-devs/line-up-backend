@@ -10,7 +10,11 @@ import lombok.Getter;
 public class WaitingResponse { // 대기 현황
     private String waitingStatus;     // 대기 상태
     private Long waitingId;           // 대기 id
-    private Integer currentWaitingNumber; // 현재 내 순서
+    private Long currentWaitingNumber; // 현재 내 순서
     private Integer expectWaitingTime;    // 예상 대기 시간
     private Integer headCount;        // 인원 수
+
+    public static WaitingResponse notWaiting(String waitingStatus, Long currentWaitingNumber, Integer expectWaitingTime){
+        return new WaitingResponse(waitingStatus,null,currentWaitingNumber,expectWaitingTime,null);
+    }
 }
