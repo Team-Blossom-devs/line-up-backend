@@ -27,7 +27,7 @@ public class CustomWaitingRepositoryImpl implements CustomWaitingRepository {
 			.leftJoin(qWaiting.customer)
 			.fetchJoin()
 			.where(cursorInitiate, qWaiting.organization.eq(organization))
-			.orderBy(qWaiting.updatedAt.asc(), qWaiting.id.desc())
+			.orderBy(qWaiting.id.asc())
 			.limit(size + 1)
 			.fetch();
 	}
