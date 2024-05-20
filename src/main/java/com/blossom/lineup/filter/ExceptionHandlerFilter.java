@@ -30,7 +30,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 		} catch (BusinessException exception){
 
-			log.error(exception.getMessage());
+			log.error("BusinessException={}", exception.getMessage());
 
 			response.setStatus(exception.getCode().getHttpStatus().value());
 			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -40,7 +40,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
 		} catch (Exception exception){
 
-			log.error(exception.getMessage());
+			log.error("Exception={}", exception.getMessage());
 
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
