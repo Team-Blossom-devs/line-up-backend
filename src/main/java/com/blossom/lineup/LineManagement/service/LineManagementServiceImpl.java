@@ -63,7 +63,7 @@ public class LineManagementServiceImpl implements LineManagementService {
 
 		Manager manager = managerRepository.findWithOrganization(currentUserInfo.getId()).stream()
 			.findAny()
-			.orElseThrow();
+			.orElseThrow(()-> new BusinessException(Code.MANAGER_NOT_FOUND));
 
 		log.info("manager Id={}", manager.getId());
 
