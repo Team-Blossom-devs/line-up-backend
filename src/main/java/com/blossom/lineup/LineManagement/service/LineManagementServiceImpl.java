@@ -65,6 +65,8 @@ public class LineManagementServiceImpl implements LineManagementService {
 			.findAny()
 			.orElseThrow();
 
+		log.info("manager Id={}", manager.getId());
+
 		List<Waiting> waitings = waitingRepository.findWaitingByCursor(cursor, manager.getOrganization(), size);
 
 		int findPageSize = waitings.size();
