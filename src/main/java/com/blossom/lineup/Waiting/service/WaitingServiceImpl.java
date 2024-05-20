@@ -55,6 +55,10 @@ public class WaitingServiceImpl implements WaitingService{
 
     private Customer findCustomer(){
         CustomUserDetails currentUserInfo = securityUtils.getCurrentUserInfo();
+
+        if(currentUserInfo.getRole().equals("MANAGER")){ // 매니저는 유저"용" 대기 접근 할 수 없음!!
+            throw new BusinessException(Code.MANAGER_ACCESS_DENIED);
+        }
         return customerRepository.findById(currentUserInfo.getId())
                 .orElseThrow(()-> new BusinessException(Code.CUSTOMER_NOT_FOUND));
     }
@@ -86,9 +90,15 @@ public class WaitingServiceImpl implements WaitingService{
 
     @Override
     public void delete(Long waitingId) {
-        log.debug(waitingId+" 대기를 삭제했습니다.");
-
         Waiting w = findWaiting(waitingId);
+        Customer customer = findCustomer();
+
+        log.info("[Waiting Delete] wCustomer : {} - SecurityCustomer : {}", w.getCustomer().getId(), customer.getId());
+
+        if(!w.getCustomer().getId().equals(customer.getId())){ // 지우기 전 권한 검사.
+            throw new BusinessException(Code.WAITING_NOT_MATCH_USER);
+        }
+
         waitingRepository.delete(w);
     }
 
@@ -136,7 +146,7 @@ public class WaitingServiceImpl implements WaitingService{
         Customer customer = findCustomer();
         log.info("qr-code 요청 유저 {} : waiting 유저 {}", customer.getId(),waiting.getCustomer().getId());
 
-        if(waiting.getCustomer().getId() != customer.getId()){
+        if(!waiting.getCustomer().getId().equals(customer.getId())){
             throw new BusinessException(Code.WAITING_NOT_MATCH_USER);
         }
 
@@ -151,20 +161,19 @@ public class WaitingServiceImpl implements WaitingService{
     /**
      * 대기 현황 조회
      * (WAITING 상태일 때)
-     * @param waiting
-     * @param organizationId
-     * @return
      */
     private WaitingResponse myCurrentWaiting(Waiting waiting, Long organizationId) {
 
         Organization o = findOrganization(organizationId);
         int beforeMeCnt = 0; // 대기가 하나도 없으면 내 앞에 대기 0팀.
         String waitingStatus = "NOT-WAITING";
+        Long waitingId = null;
         Integer headCount = null;
 
         // waiting이 있으면 내 대기번호 반환
         if(waiting != null){
             log.debug("대기 현황 조회 : "+waiting.getId());
+            waitingId = waiting.getId();
             headCount = waiting.getHeadCount();
             List<Waiting> beforeMe = waitingRepository.findBeforeMyWaiting(o, waiting.getId()); // 나 이전의 대기 명단
             beforeMeCnt = beforeMe.size();
@@ -175,22 +184,22 @@ public class WaitingServiceImpl implements WaitingService{
         List<Waiting> usingTables = waitingRepository.findUsingTables(o);
 
         // 정렬된 각각의 테이블의 남은 이용 시간(분)
-        List<Integer> remainTableTimes = new java.util.ArrayList<>(usingTables.stream()
-            .flatMap(w ->{
-                // 대기시간이 null인 테이블이 존재하면, exception
-                if(w.getEntranceTime()==null){
-                    throw new BusinessException(Code.ENTRANCE_TIME_IS_NULL);
-                } else {
-                    LocalDateTime entranceTime = w.getEntranceTime();
-                    LocalDateTime currentTime = LocalDateTime.now();
-                    Duration duration = Duration.between(entranceTime,currentTime);
-                    int minutes = (int) duration.toMinutes(); // 분단위로 변환
-                    int remainMinutes = Math.max(o.getTableTimeLimit() - minutes, 0);
+        List<Integer> remainTableTimes = usingTables.stream()
+                .flatMap(w -> {
+                    // 대기시간이 null인 테이블이 존재하면, exception
+                    if (w.getEntranceTime() == null) {
+                        throw new BusinessException(Code.ENTRANCE_TIME_IS_NULL);
+                    } else {
+                        LocalDateTime entranceTime = w.getEntranceTime();
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        Duration duration = Duration.between(entranceTime, currentTime);
+                        int minutes = (int) duration.toMinutes(); // 분단위로 변환
+                        int remainMinutes = Math.max(o.getTableTimeLimit() - minutes, 0);
 
-                    return java.util.stream.IntStream.range(0, w.getTableCount())
-                            .mapToObj(i -> remainMinutes); // 각 tableCnt 개수만큼 지속시간을 반복
-                }
-            }).collect(Collectors.toList()));
+                        return java.util.stream.IntStream.range(0, w.getTableCount())
+                                .mapToObj(i -> remainMinutes); // 각 tableCnt 개수만큼 지속시간을 반복
+                    }
+                }).collect(Collectors.toList());
 
         // 주점에서 다루는 테이블보다 테이블 이용 개수가 적으면, List에 0분 남은 개수만큼 추가.
         while(remainTableTimes.size() < o.getTableCount()){
@@ -204,14 +213,12 @@ public class WaitingServiceImpl implements WaitingService{
 
         int expactWaitingTime = quotient * o.getTableTimeLimit() + remainTableTimes.get(remainder);
 
-        return new WaitingResponse(waitingStatus, beforeMeCnt, expactWaitingTime, headCount);
+        return new WaitingResponse(waitingStatus, waitingId, beforeMeCnt, expactWaitingTime, headCount);
     }
 
     /**
      * 입장중 상태 조회
      * (PENDING)
-     * @param waiting
-     * @return
      */
     private PendingResponse getPendingStatus(Waiting waiting) {
         String waitingStatus = EntranceStatus.PENDING.getEntranceStatus();

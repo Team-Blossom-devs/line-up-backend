@@ -32,7 +32,8 @@ public enum Code {
 	WAITING_NOT_FOUND(HttpStatus.BAD_REQUEST, "WAT-001", "대기 기록을 찾을 수 없습니다."),
 	WAITING_DUPLICATE(HttpStatus.BAD_REQUEST, "WAT-002", "대기는 1곳만 가능합니다."),
 	WAITING_NUMBER_IS_NULL(HttpStatus.BAD_REQUEST, "WAT-101", "대기 번호가 null 입니다."),
-	WAITING_NOT_MATCH_USER(HttpStatus.BAD_REQUEST, "WAT-202", "사용자 정보가 일치하지 않습니다."),
+	WAITING_NOT_MATCH_USER(HttpStatus.BAD_REQUEST, "WAT-201", "사용자 정보가 일치하지 않습니다."),
+	MANAGER_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "WAT-202", "매니저는 사용자용 대기 정보에 접근할 수 없습니다."),
 	WAITING_IS_NOT_PENDING(HttpStatus.BAD_REQUEST, "WAT-301", "대기상태가 PENDING이어야 QR코드 조회가 가능합니다."),
 
 	QRCODE_IS_NULL(HttpStatus.BAD_REQUEST, "WAT-302", "입장시간이 지났거나 QR코드가 없습니다."),
