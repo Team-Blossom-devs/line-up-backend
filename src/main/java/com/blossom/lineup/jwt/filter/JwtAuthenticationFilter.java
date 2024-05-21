@@ -55,7 +55,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (filterPassUrl.contains(request.getRequestURI()) || request.getRequestURI().contains("/admin/entrance-process/")) {
+        String requestURI = request.getRequestURI();
+
+        if (filterPassUrl.contains(requestURI) || requestURI.contains("/admin/entrance-process/") ||
+            requestURI.contains("/js") || requestURI.contains("/css")) {
             filterChain.doFilter(request, response);
             return;
         }
