@@ -148,7 +148,7 @@ public class WaitingServiceImpl implements WaitingService{
         // Customer가 아닌 다른 role을 가진 사용자이면, 마지막 대기자를 기준으로 대기 현황 조회 (NOT-WAITING)
         if(!currentUserInfo.getRole().equals(Role.USER.getRole())){
             log.info("[Waiting Status] Role: {}", currentUserInfo.getRole());
-            return Response.ok(recentWaiting(organizationId)); // NOT-WAITING
+            return recentWaiting(organizationId); // NOT-WAITING
         }
 
         Customer customer = findCustomer();
@@ -161,7 +161,7 @@ public class WaitingServiceImpl implements WaitingService{
         if(findWaiting.isEmpty()){
             log.info("[Waiting Status] Customer: {} : NOT-WAITING", customer.getId());
             // 마지막 대기자 기준으로 대기 현황 조회
-            return Response.ok(recentWaiting(organizationId));
+            return recentWaiting(organizationId);
 
         } else { // 걸어둔 대기가 있을 때, 상태값에 따라 다르게 처리.
             Waiting waiting = findWaiting.get();
@@ -169,12 +169,12 @@ public class WaitingServiceImpl implements WaitingService{
             // 1. WAITING 상태
             if(waiting.getEntranceStatus() == EntranceStatus.WAITING) {
                 log.info("[Waiting Status] Customer: {} : WAITING", customer.getId());
-                return Response.ok(myCurrentWaiting(waiting,organizationId));
+                return myCurrentWaiting(waiting,organizationId);
             }
             // 2. PENDING 상태
             else {
                 log.info("[Waiting Status] Customer: {} : PENDING", customer.getId());
-                return Response.ok(getPendingStatus(waiting));
+                return getPendingStatus(waiting);
             }
         }
     }
@@ -184,7 +184,7 @@ public class WaitingServiceImpl implements WaitingService{
      * (NOT-WAITING)
      * -> 대기하지 않은 유저, 매니저, 어드민 등
      */
-    private WaitingResponse recentWaiting(Long organizationId){
+    private Response<WaitingResponse> recentWaiting(Long organizationId){
         String waitingStatus = "NOT-WAITING";
         Organization organization = findOrganization(organizationId);
 
@@ -198,7 +198,7 @@ public class WaitingServiceImpl implements WaitingService{
 
         // 테이블이 남는 경우 -> 바로 return (대기 시간 계산하지 않고 무조건 0분, 테이블이 남았으니까)
         if(organization.getTableCount()-usingTableCount>=1){
-            return WaitingResponse.notWaiting(waitingStatus, currentWaitingCount, 0);
+            return Response.ok(WaitingResponse.notWaiting(waitingStatus, currentWaitingCount, 0));
         }
 
         // 전체 테이블 남은 이용시간
@@ -226,14 +226,14 @@ public class WaitingServiceImpl implements WaitingService{
         int remainder = (int)currentWaitingCount % organization.getTableCount(); // 나머지 : 몇번째 테이블에 들어가게 될지
         int expactWaitingTime = quotient * organization.getTableTimeLimit() + remainTableTimes[remainder];
 
-        return WaitingResponse.notWaiting(waitingStatus, currentWaitingCount, expactWaitingTime);
+        return Response.ok(WaitingResponse.notWaiting(waitingStatus, currentWaitingCount, expactWaitingTime));
     }
 
     /**
      * 대기 현황 조회
      * (WAITING)
      */
-    private WaitingResponse myCurrentWaiting(Waiting waiting, Long organizationId) {
+    private Response<WaitingResponse> myCurrentWaiting(Waiting waiting, Long organizationId) {
 
         Organization o = findOrganization(organizationId);
         long countBeforeMe = waitingRepository.countWaitingBeforeMe(waiting.getId());
@@ -245,7 +245,7 @@ public class WaitingServiceImpl implements WaitingService{
 
         // 테이블이 남는 경우 -> 바로 return (대기 시간 계산하지 않고 무조건 0분, 테이블이 남았으니까)
         if(o.getTableCount()-usingTableCount>=0){
-            return new WaitingResponse(waiting.getEntranceStatus().getEntranceStatus(), waiting.getId(), countBeforeMe, 0, waiting.getHeadCount());
+            return  Response.ok(new WaitingResponse(waiting.getEntranceStatus().getEntranceStatus(), waiting.getId(), countBeforeMe, 0, waiting.getHeadCount()));
         }
 
         // 전체 테이블 남은 이용시간
@@ -273,14 +273,14 @@ public class WaitingServiceImpl implements WaitingService{
         int remainder = (int)countBeforeMe % o.getTableCount(); // 나머지 : 몇번째 테이블에 들어가게 될지
         int expactWaitingTime = quotient * o.getTableTimeLimit() + remainTableTimes[remainder];
 
-        return new WaitingResponse(waiting.getEntranceStatus().getEntranceStatus(), waiting.getId(), countBeforeMe, expactWaitingTime, waiting.getHeadCount());
+        return Response.ok(new WaitingResponse(waiting.getEntranceStatus().getEntranceStatus(), waiting.getId(), countBeforeMe, expactWaitingTime, waiting.getHeadCount()));
     }
 
     /**
      * 입장중 상태 조회
      * (PENDING)
      */
-    private PendingResponse getPendingStatus(Waiting waiting) {
+    private Response<PendingResponse> getPendingStatus(Waiting waiting) {
         String waitingStatus = EntranceStatus.PENDING.getEntranceStatus();
 
         long timeLimit = EntranceTimeLimit.TEMP.getTime(); // 10분
@@ -288,9 +288,10 @@ public class WaitingServiceImpl implements WaitingService{
 
         Duration duration = Duration.between(waiting.getUpdatedAt(), now);
         if(duration.toMinutes() > timeLimit){ // PENDING 상태가 된지 10분이 넘어가면 에러.
-            throw new BusinessException(Code.PENDING_TIME_LIMIT_EXPIRED);
+            return Response.fail(Code.PENDING_TIME_LIMIT_EXPIRED.getCode(), Code.PENDING_TIME_LIMIT_EXPIRED.getMessage(), new PendingResponse("EXPIRED", waiting.getId(), 0L));
         }
 
-        return new PendingResponse(waitingStatus, waiting.getId(), timeLimit - duration.toMinutes());
+
+        return Response.ok(new PendingResponse(waitingStatus, waiting.getId(), timeLimit - duration.toMinutes()));
     }
 }
