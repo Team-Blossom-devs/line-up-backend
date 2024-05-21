@@ -27,6 +27,7 @@ public enum Code {
 
 	// ORG : Organization entity error
 	ORGANIZATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORG-001", "주점을 찾을 수 없습니다."),
+	ORGANIZATION_OUT_OF_HOURS(HttpStatus.BAD_REQUEST, "ORG-002", "주점의 운영시간이 아닙니다. 운영시간에 이용해 주세요!"),
 
 	// WAT : Waiting entity error
 	WAITING_NOT_FOUND(HttpStatus.BAD_REQUEST, "WAT-001", "대기 기록을 찾을 수 없습니다."),
