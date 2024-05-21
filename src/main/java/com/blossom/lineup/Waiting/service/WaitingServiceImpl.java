@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -68,11 +69,25 @@ public class WaitingServiceImpl implements WaitingService{
                 .orElseThrow(()-> new BusinessException(Code.ORGANIZATION_NOT_FOUND));
     }
 
+    private boolean checkOperatingTime(LocalTime openTime, LocalTime closeTime){
+        LocalTime now = LocalDateTime.now().toLocalTime();
+
+        if(closeTime.isBefore(openTime)){ // closeTime이 자정을 넘는 경우
+            return !now.isBefore(openTime) || now.isBefore(closeTime);
+        } else {
+            return !now.isBefore(openTime) && now.isBefore(closeTime);
+        }
+    }
 
     @Override
     public void create(WaitingRequest request) {
         Customer customer = findCustomer();
         Organization organization = findOrganization(request.getOrganizationId());
+
+        // 주점 운영 시간이외의 시간에 waiting을 걸려고 하면 에러
+        if(!checkOperatingTime(organization.getOpenTime(), organization.getCloseTime())){
+            throw new BusinessException(Code.ORGANIZATION_OUT_OF_HOURS);
+        }
 
         // 내가 기존에 Waiting을 걸어놓은 곳이 있는지 확인. -> 2곳이상에 대기하려고 하면 error.
         List<EntranceStatus> statuses = Arrays.asList(EntranceStatus.WAITING, EntranceStatus.PENDING);
