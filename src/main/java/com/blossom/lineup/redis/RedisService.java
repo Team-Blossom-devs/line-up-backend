@@ -1,19 +1,23 @@
 package com.blossom.lineup.redis;
 
+import com.blossom.lineup.base.Code;
+import com.blossom.lineup.base.exceptions.BusinessException;
+import com.blossom.lineup.base.exceptions.ServerException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
-
 /**
  * Redis 서비스
  * 유저 관련 key 값은 member:{데이터 의미}:{id} 값 형식으로 ex) member:qr:1
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisService {
@@ -73,7 +77,18 @@ public class RedisService {
 	 * @return : Nullable 한 byte 배열 데이터를 Optional 로 반환
 	 */
 	public Optional<byte[]> getByteData(String key) {
-		return Optional.ofNullable(Base64.getDecoder().decode((String) redisTemplate.opsForValue().get(key)));
+		try{
+			return Optional.ofNullable(
+					Base64.getDecoder().decode((String) redisTemplate.opsForValue().get(key))
+			);
+		} catch (NullPointerException e) {
+			// Redis에 키가 존재 하지 않음.
+			log.error("[QR-code] QR CODE가 존재 하지 않습니다.");
+			throw new BusinessException(Code.QRCODE_IS_NULL);
+		} catch (IllegalArgumentException e){
+			log.error("[QR-code] Base64 디코딩 중 문제가 발생했습니다.");
+			throw new ServerException(Code.QRCODE_READING_ERROR);
+		}
 	}
 
 	/**
