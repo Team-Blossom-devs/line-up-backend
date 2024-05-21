@@ -55,7 +55,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers("/","/css/**","/images/**", "/js/**",
                                 "/index.html", "/favicon.ico").permitAll() // 일반 경로 허용
-                        .requestMatchers("/api/sign-in/manager","/oauth2/authorization/kakao", "/api/oauth/sign-up", "/login/**").permitAll() // 로그인 및 회원가입 경로 허용
+                        .requestMatchers("/api/sign-in/manager","/oauth2/authorization/kakao",
+							"/api/oauth/sign-up", "/login/**", "/api/manager/complete", "/admin/entrance-process/**").permitAll() // 로그인 및 회원가입 경로 허용
                         .requestMatchers("/api/manager/**").hasRole(Role.MANAGER.getRole()) // MANAGER 역할을 가진 사용자만 접근 가능
                         .anyRequest().authenticated()) // 그 외 모든 요청은 인증 요구
                 .oauth2Login((oauth2Login) ->
