@@ -1,5 +1,6 @@
 package com.blossom.lineup.Waiting.service;
 
+import com.blossom.lineup.LineManagement.util.EntranceTimeLimit;
 import com.blossom.lineup.Member.CustomUserDetails;
 import com.blossom.lineup.Member.CustomerRepository;
 import com.blossom.lineup.Member.entity.Customer;
@@ -282,10 +283,14 @@ public class WaitingServiceImpl implements WaitingService{
     private PendingResponse getPendingStatus(Waiting waiting) {
         String waitingStatus = EntranceStatus.PENDING.getEntranceStatus();
 
+        long timeLimit = EntranceTimeLimit.TEMP.getTime(); // 10분
         LocalDateTime now = LocalDateTime.now();
-        Duration duration = Duration.between(now, waiting.getUpdatedAt());
-        long remainMinutes = Math.max(0, duration.toMinutes()); // 남은시간 or 0 (분)
 
-        return new PendingResponse(waitingStatus, waiting.getId(), remainMinutes);
+        Duration duration = Duration.between(waiting.getUpdatedAt(), now);
+        if(duration.toMinutes() > timeLimit){ // PENDING 상태가 된지 10분이 넘어가면 에러.
+            throw new BusinessException(Code.PENDING_TIME_LIMIT_EXPIRED);
+        }
+
+        return new PendingResponse(waitingStatus, waiting.getId(), timeLimit - duration.toMinutes());
     }
 }
