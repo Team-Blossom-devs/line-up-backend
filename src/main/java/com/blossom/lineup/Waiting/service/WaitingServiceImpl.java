@@ -286,6 +286,6 @@ public class WaitingServiceImpl implements WaitingService{
         Duration duration = Duration.between(now, waiting.getUpdatedAt());
         long remainMinutes = Math.max(0, duration.toMinutes()); // 남은시간 or 0 (분)
 
-        return new PendingResponse(waitingStatus, remainMinutes, waiting.getId());
+        return new PendingResponse(waitingStatus, waiting.getId(), remainMinutes);
     }
 }
