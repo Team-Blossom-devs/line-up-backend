@@ -22,17 +22,19 @@ public class WaitingDetailsResponse {
 	private Long id;
 	private String name;
 	private Integer tableNumber;
+	private Integer tableCount;
 	private LocalDateTime entranceTime;
 	private Integer headCount;
 	private String phoneNumber;
 	private EntranceStatus entranceStatus;
 
-	public WaitingDetailsResponse(Long id, String name, Integer headCount, Integer tableNumber, EntranceStatus entranceStatus,
+	public WaitingDetailsResponse(Long id, String name, Integer headCount, Integer tableNumber, Integer tableCount, EntranceStatus entranceStatus,
 		LocalDateTime entranceTime){
 		this.id = id;
 		this.name = name;
 		this.headCount = headCount;
 		this.tableNumber = tableNumber;
+		this.tableCount = tableCount;
 		this.entranceStatus = entranceStatus;
 		this.entranceTime = entranceTime;
 	}
@@ -71,6 +73,7 @@ public class WaitingDetailsResponse {
 					waiting.getCustomer().getUserName(),
 					waiting.getHeadCount(),
 					waiting.getTableNumber(),
+					waiting.getTableCount(),
 					waiting.getEntranceStatus(),
 					waiting.getEntranceTime());
 			}
