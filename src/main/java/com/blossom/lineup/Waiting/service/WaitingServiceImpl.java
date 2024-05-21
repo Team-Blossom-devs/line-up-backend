@@ -48,8 +48,6 @@ public class WaitingServiceImpl implements WaitingService{
     @Value("${deploy.qrkey}")
     private String redisMemberQrKey;
 
-
-    // TODO : Context Holder 구현 후, 권한 검사 추가 (ex- 내 대기번호가 아닌데 조회하는 경우)
     private Waiting findWaiting(Long waitingId){
         return waitingRepository.findById(waitingId)
                 .orElseThrow(()->new BusinessException(Code.WAITING_NOT_FOUND));
@@ -281,17 +279,19 @@ public class WaitingServiceImpl implements WaitingService{
      * (PENDING)
      */
     private Response<PendingResponse> getPendingStatus(Waiting waiting) {
-        String waitingStatus = EntranceStatus.PENDING.getEntranceStatus();
 
-        long timeLimit = EntranceTimeLimit.TEMP.getTime(); // 10분
+        long timeLimitInSeconds = EntranceTimeLimit.TEMP.getTime() *60; // 10분 -> 초단위
+
         LocalDateTime now = LocalDateTime.now();
-
         Duration duration = Duration.between(waiting.getUpdatedAt(), now);
-        if(duration.toMinutes() > timeLimit){ // PENDING 상태가 된지 10분이 넘어가면 에러.
+        long durationInSeconds = duration.getSeconds();
+
+        if(durationInSeconds > timeLimitInSeconds){ // PENDING 상태가 된지 10분이 넘어가면 에러.
             return Response.fail(Code.PENDING_TIME_LIMIT_EXPIRED.getCode(), Code.PENDING_TIME_LIMIT_EXPIRED.getMessage(), new PendingResponse("EXPIRED", waiting.getId(), 0L));
         }
 
+        long remainMinutes = (timeLimitInSeconds - durationInSeconds) / 60; // 남은 시간을 분단위로 변경
 
-        return Response.ok(new PendingResponse(waitingStatus, waiting.getId(), timeLimit - duration.toMinutes()));
+        return Response.ok(new PendingResponse("PENDING", waiting.getId(), remainMinutes));
     }
 }
