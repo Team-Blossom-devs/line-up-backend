@@ -44,7 +44,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final List<String> filterPassUrl = List.of("/", "/favicon.ico", "/api/sign-in/manager","/login/oauth2/code/kakao", "/oauth2/authorization/kakao");
+    private static final List<String> filterPassUrl = List.of("/", "/favicon.ico", "/api/sign-in/manager","/login/oauth2/code/kakao", "/oauth2/authorization/kakao", "/api/manager/complete");
 
     private final JwtTokenProvider jwtTokenProvider;
     private final ManagerRepository managerRepository;
@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (filterPassUrl.contains(request.getRequestURI())) {
+        if (filterPassUrl.contains(request.getRequestURI()) || request.getRequestURI().contains("/admin/entrance-process/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -112,17 +112,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             accessToken = jwtTokenProvider.generateAccessToken(authentication);
 
-        }
-
-        if (refreshToken == null){
-            Optional<Cookie> cookie = Arrays.stream(request.getCookies())
-                .filter(cookies -> cookies.getName().equals("refreshToken"))
-                .findFirst();
-            if (cookie.isEmpty()){
-                refreshToken = null;
-            } else {
-                refreshToken = cookie.get().getValue();
-            }
         }
 
         // Token 응답 형식 설정
