@@ -23,7 +23,7 @@ public class JwtResponseConfigurer {
                 .path("/")
                 .httpOnly(true)
                 .maxAge(TimeUnit.MINUTES.toMillis(jwtConfiguration.getCookieExpiration()))
-                .sameSite("")
+                .sameSite("None")
                 .secure(true)
                 .build();
 
