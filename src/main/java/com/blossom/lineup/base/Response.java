@@ -49,7 +49,7 @@ public class Response<T> {
 		return new Response<>(code, message);
 	}
 
-	public static <E> Response<E> fail(String code, String message, E data){
+	public static <T> Response<T> fail(String code, String message, T data){
 		return new Response<>(code,message,data);
 	}
 
