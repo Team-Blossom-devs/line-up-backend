@@ -106,8 +106,7 @@ public class SecurityConfig {
         corsConfiguration.addExposedHeader("*");
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:5672",
+                "https://www.blossom-server.com",
                 "http://localhost:5174",
                 "http://3.38.250.226",
                 "http://localhost:8080"
