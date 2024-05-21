@@ -36,6 +36,7 @@ public enum Code {
 	ROLE_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "WAT-202", "USER가 아니면 대기정보에 접근할 수 없습니다."),
 	WAITING_DELETE_DENIED(HttpStatus.BAD_REQUEST, "WAT-203", "WAITING을 삭제할 권한이 없습니다."),
 	WAITING_IS_NOT_PENDING(HttpStatus.BAD_REQUEST, "WAT-301", "대기상태가 PENDING이어야 QR코드 조회가 가능합니다."),
+	PENDING_TIME_LIMIT_EXPIRED(HttpStatus.BAD_REQUEST, "WAT-302", "입장 대기상태(PENDING)가 된지 10분이 경과하여 입장이 불가합니다. 관리자에게 문의하세요"),
 
 	QRCODE_IS_NULL(HttpStatus.BAD_REQUEST, "WAT-302", "입장시간이 지났거나 QR코드가 없습니다."),
 	QRCODE_READING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "WAT-500", "QR 코드를 읽는 과정에서 에러가 발생했습니다."),

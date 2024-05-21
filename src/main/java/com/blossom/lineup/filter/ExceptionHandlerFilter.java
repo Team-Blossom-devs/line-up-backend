@@ -1,21 +1,20 @@
 package com.blossom.lineup.filter;
 
-import java.io.IOException;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import com.blossom.lineup.base.Code;
 import com.blossom.lineup.base.Response;
 import com.blossom.lineup.base.exceptions.BusinessException;
+import com.blossom.lineup.base.exceptions.ServerException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
 
 @Slf4j
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
@@ -38,9 +37,18 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
 			setBusinessExceptionResponse(response, exception.getCode());
 
+		} catch (ServerException e){
+			log.error("BusinessException={}", e.getMessage());
+
+			response.setStatus(e.getCode().getHttpStatus().value());
+			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+			response.setCharacterEncoding("UTF-8");
+
+			setBusinessExceptionResponse(response, e.getCode());
+
 		} catch (Exception exception){
 
-			log.error("Exception={}", exception.getMessage());
+			log.error("Exception= ", exception);
 
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
