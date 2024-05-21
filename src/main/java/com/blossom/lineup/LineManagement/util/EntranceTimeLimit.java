@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum EntranceTimeLimit {
-	TEMP(10L);
+	TEMP(15L);
 
 	private final Long time;
 
