@@ -4,7 +4,7 @@ const sendData = async (waitingId, tableNumber, tableCount) => {
         return;
     }
 
-    await axios.patch("http://localhost:8080/api/manager/complete", {
+    await axios.patch("https://www.blossom-server.com/api/manager/complete", {
         id: waitingId,
         tableNumber: tableNumber,
         tableCount: tableCount
