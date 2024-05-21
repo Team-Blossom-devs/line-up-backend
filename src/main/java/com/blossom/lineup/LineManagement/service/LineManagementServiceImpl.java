@@ -72,17 +72,25 @@ public class LineManagementServiceImpl implements LineManagementService {
 		int findPageSize = waitings.size();
 		int lastPageElementIndex = findPageSize > size ? size - 1 : findPageSize - 1;
 
+		if (findPageSize > 0){
+			return Response.ok(
+				LineListResponse.builder()
+					.hasNext(findPageSize > size)
+					.cursorId(lastPageElementIndex < 0 ? cursor : waitings.get(lastPageElementIndex).getId())
+					.waitingDetails(
+						waitings.stream()
+							.limit(Math.min(size, findPageSize))
+							.map(WaitingDetailsResponse::fromEntity)
+							.toList()
+					)
+					.build()
+			);
+		}
+
 		return Response.ok(
 			LineListResponse.builder()
-			.hasNext(findPageSize > size)
-			.cursorId(waitings.get(lastPageElementIndex).getId())
-			.waitingDetails(
-				waitings.stream()
-				.limit(Math.min(size, findPageSize))
-				.map(WaitingDetailsResponse::fromEntity)
-				.toList()
-			)
-			.build()
+				.hasNext(findPageSize > size)
+				.build()
 		);
 	}
 
