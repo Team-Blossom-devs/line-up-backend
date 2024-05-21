@@ -12,6 +12,8 @@ import com.blossom.lineup.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.blossom.lineup.oauth2.service.CustomOAuth2UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,6 +46,10 @@ public class SecurityConfig {
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Value("${deploy.frontend-url}")
+    private String frontendUrl;
+    @Value("${deploy.backend-url}")
+    private String backendUrl;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -106,9 +112,9 @@ public class SecurityConfig {
         corsConfiguration.addExposedHeader("*");
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowedOrigins(List.of(
-                "https://www.blossom-server.com",
+                frontendUrl,
+                backendUrl,
                 "http://localhost:5174",
-                "http://3.38.250.226",
                 "http://localhost:8080"
         ));
         corsConfiguration.setAllowCredentials(true);
