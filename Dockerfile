@@ -6,4 +6,4 @@ RUN gradle build --no-daemon --warning-mode=all --scan -x test
 
 FROM openjdk:17
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
-ENTRYPOINT ["java", "-jar", "/app/spring-boot-application.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "/app/spring-boot-application.jar"]
