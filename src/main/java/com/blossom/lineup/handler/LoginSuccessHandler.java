@@ -57,6 +57,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         try {
             String responseBody = objectMapper.writeValueAsString(Response.ok(signInResponse));
+
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
+
             response.getWriter().write(responseBody);
         } catch (IOException e) {
             throw new RuntimeException(e);

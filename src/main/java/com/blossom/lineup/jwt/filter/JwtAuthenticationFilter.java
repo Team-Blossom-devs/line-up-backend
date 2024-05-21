@@ -13,6 +13,7 @@ import com.blossom.lineup.jwt.core.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * JWT 인증 필터
@@ -41,7 +44,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final List<String> filterPassUrl = List.of("/", "/favicon.ico", "/api/sign-in/manager","/login/oauth2/code/kakao", "/oauth2/authorization/kakao");
+    private static final List<String> filterPassUrl = List.of("/", "/favicon.ico", "/api/sign-in/manager","/login/oauth2/code/kakao", "/oauth2/authorization/kakao", "/api/manager/complete");
 
     private final JwtTokenProvider jwtTokenProvider;
     private final ManagerRepository managerRepository;
@@ -52,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (filterPassUrl.contains(request.getRequestURI())) {
+        if (filterPassUrl.contains(request.getRequestURI()) || request.getRequestURI().contains("/admin/entrance-process/")) {
             filterChain.doFilter(request, response);
             return;
         }
