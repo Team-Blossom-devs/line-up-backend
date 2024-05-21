@@ -13,6 +13,7 @@ import com.blossom.lineup.jwt.core.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * JWT 인증 필터
@@ -109,6 +112,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             accessToken = jwtTokenProvider.generateAccessToken(authentication);
 
+        }
+
+        if (refreshToken == null){
+            Optional<Cookie> cookie = Arrays.stream(request.getCookies())
+                .filter(cookies -> cookies.getName().equals("refreshToken"))
+                .findFirst();
+            if (cookie.isEmpty()){
+                refreshToken = null;
+            } else {
+                refreshToken = cookie.get().getValue();
+            }
         }
 
         // Token 응답 형식 설정
